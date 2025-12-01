@@ -3,49 +3,442 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Cart - Mua Sắm Độc Đáo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+
+    <title> Quán ăn của Nguyn - Đặt Món Online</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* Thiết lập chung */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 1. HEADER */
+        .main-header {
+            background-color: #e38306; /* Màu cam đậm ấm áp */
+            color: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .main-nav a {
+            margin-left: 25px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .main-nav a:hover {
+            color: #ffd700;
+        }
+
+        .cart-btn {
+            background-color: #209957; /* Màu đỏ nổi bật cho Giỏ Hàng */
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 2. HERO SECTION (BANNER) */
+        .hero-section {
+            background-color: #e67e22; /* Màu cam sáng hơn */
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Đã sửa lỗi chính tả và làm cho H1 chuyên nghiệp hơn */
+        .hero-section h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .order-now-btn {
+            display: inline-block;
+            background-color: #2ecc71; /* Màu xanh lá cây nổi bật */
+            color: white;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .order-now-btn:hover {
+            background-color: #27ae60;
+        }
+
+        /* 3. DANH MỤC MENU */
+        .menu-categories h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #d35400;
+        }
+
+        .categories-list {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .category-item {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            transition: background-color 0.3s, color 0.3s;
+            background-color: white;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .category-item:hover, .category-item.active {
+            background-color: #e67e22;
+            color: white;
+            border-color: #e67e22;
+        }
+
+        /* 4. FOOD MENU (DANH SÁCH MÓN ĂN) */
+        .food-menu h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* BỐ CỤC HÀNG NGANG & CUỘN (Horizontal Scroll Layout) */
+        .food-grid {
+            /* Key change: use flex */
+            display: flex; 
+            /* Key change: prevent wrapping to force horizontal layout */
+            flex-wrap: nowrap; 
+            /* Key change: enable horizontal scrolling when content overflows */
+            overflow-x: auto; 
+            gap: 30px;
+            padding: 10px 0; /* Thêm padding để cuộn dễ hơn */
+            /* Ẩn thanh cuộn mặc định để giao diện gọn gàng hơn */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .food-grid::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .food-item {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding-bottom: 15px;
+            
+            /* QUAN TRỌNG: Đặt kích thước cố định và ngăn item co/giãn */
+            flex: 0 0 300px; /* flex-grow: 0, flex-shrink: 0, basis: 300px */
+            width: 300px; /* Chiều rộng cố định cho mỗi món ăn */
+        }
+
+        .food-item img {
+            width: 100%;
+            height: 200px; /* Chiều cao cố định để các ảnh bằng nhau */
+            object-fit: cover;
+        }
+
+        .food-item h3 {
+            color: #d35400;
+            margin: 15px 0 5px 0;
+        }
+
+        .food-item .description {
+            font-size: 0.9em;
+            color: #777;
+            padding: 0 15px;
+            min-height: 40px;
+        }
+
+        .food-item .price {
+            font-size: 1.2em;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+
+        .add-to-cart-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #27ae60;
+        }
+
+        /* 5. FOOTER */
+       
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+            margin-top: 40px;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: #e67e22;
+        }
+    </style>
 </head>
-<body class="bg-cosmic-dark min-h-screen flex flex-col">
+<body>
 
-<nav class="bg-cosmic-secondary shadow sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        <span class="text-cosmic-accent font-bold text-xl">🌌 Cosmic Cart</span>
-        <div class="flex space-x-4">
-            <button id="nav-home" class="nav-link">Trang Chủ</button>
-            <button id="nav-cart-btn" class="nav-link">Giỏ Hàng (<span id="cart-count">0</span>)</button>
-            <button id="nav-profile" class="nav-link">Trang Cá Nhân</button>
-            <button id="nav-shop" class="nav-link">Gian Hàng</button>
-        </div>
-    </div>
-</nav>
+    <header class="main-header">
+        <div class="logo">🍲 Nguyn online </div>
+        <nav class="main-nav">
+            <a href="#menu"><i class="fas fa-list-alt"></i> Menu</a>
+            <a href="#promotions"><i class="fas fa-tags"></i> Khuyến Mãi</a>
+            <a href="#contact"><i class="fas fa-phone"></i> Liên Hệ</a>
+            <!-- Thêm id để JS có thể cập nhật -->
+            <a href="#" class="cart-btn" id="cart-btn"><i class="fas fa-shopping-cart"></i> Giỏ Hàng (0)</a>
+        </nav>
+    </header>
 
-<main id="app" class="flex-grow max-w-7xl mx-auto p-4">
-    <div id="initial-loading" class="text-center py-20 text-gray-400">
-        <div class="animate-spin border-4 border-t-cosmic-accent border-gray-600 rounded-full w-10 h-10 mx-auto"></div>
-        <p class="mt-4">Đang tải ứng dụng...</p>
-    </div>
-</main>
+    <main class="container"> 
+        
+    
+        <section class="hero-section">
+            <!-- Đã sửa: H1 chuyên nghiệp hơn và sửa lỗi chính tả -->
+            <h1>Tiệm ăn online của Nguyn</h1>
+            <p>Đặt món ngay để nhận ưu đãi 36% cho đơn hàng đầu tiên!</p>
+            <a href="#menu" class="order-now-btn">ĐẶT HÀNG NGAY</a>
+        </section>
 
-<div id="cart-drawer"
-     class="fixed top-0 right-0 w-80 h-full bg-cosmic-secondary shadow-xl transform translate-x-full transition-transform z-50 overflow-y-auto p-4">
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-cosmic-accent font-bold text-lg">Giỏ Hàng</h2>
-        <button id="close-cart-btn" class="text-red-500 font-bold">Đóng</button>
-    </div>
-    <div id="cart-items" class="space-y-2 text-white"></div>
-    <button id="checkout-btn"
-            class="mt-4 w-full bg-cosmic-accent text-cosmic-dark font-bold py-2 rounded-lg">
-        Thanh Toán
-    </button>
-</div>
 
-<footer class="bg-cosmic-secondary border-t border-cosmic-accent/30 mt-auto p-6 text-center text-gray-400">
-    <p>&copy; 2025| Website của Đông. Mọi quyền được bảo lưu.</p>
-    <p>Hotline: <span class="text-cosmic-accent font-bold">0343 544 212</span></p>
-</footer>
+        <section class="food-menu" id="menu">
+            <h2>🔥 Các Món Nổi Bật</h2>
+            
+            <!-- Bố cục này sẽ cuộn ngang nhờ CSS đã chỉnh sửa -->
+            <div class="food-grid">
+                
+                <div class="food-item">
+                    <!-- Đã thêm alt mô tả cho SEO và Accessibility -->
+                    <img src="https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/2024_1_12_638406880045931692_cach-lam-bun-cha-ha-noi-0.jpg" alt="Bún Chả Hà Nội trọn vẹn">
+                    <h3>Bún Chả Hà Nội</h3>
+                    <p class="description">Thịt nướng thơm lừng, bún tươi và nước chấm chua ngọt đặc trưng.</p>
+                    <p class="price">**25.000 VNĐ**</p>
+                    <button class="add-to-cart-btn" data-name="Bun Cha" data-price="25000">Thêm vào Giỏ</button>
+                </div>
 
-<script src="script.js" type="module"></script>
+                <div class="food-item">
+                    <img src="https://monngonmoingay.com/wp-content/uploads/2019/03/pho-bo-bap-hoa-500.jpg" alt="Bát Phở Bò Đặc Biệt">
+                    <h3>Phở Bò Đặc Biệt</h3>
+                    <p class="description">Nước dùng hầm xương đậm đà, thịt bò tái/chín mềm tuyệt hảo.</p>
+                    <p class="price">**20.000 VNĐ**</p>
+                    <button class="add-to-cart-btn" data-name="Pho Bo" data-price="20000">Thêm vào Giỏ</button>
+                </div>
+                
+                <div class="food-item">
+                    <img src="https://133748497.cdn6.editmysite.com/uploads/1/3/3/7/133748497/KU4IHBWI6JM6X2IKA3G72LU4.jpeg" alt="Bánh Mì Thịt Nướng">
+                    <h3>Bánh Mì Thịt Nướng</h3>
+                    <p class="description">Bánh mì giòn rụm, nhân đầy đủ rau, thịt, chả và patê thơm béo.</p>
+                    <p class="price">**20.000 VNĐ**</p>
+                    <button class="add-to-cart-btn" data-name="Banh Mi" data-price="20000">Thêm vào Giỏ</button>
+                </div>
+                
+                <div class="food-item">
+                    <img src="https://helenrecipes.com/wp-content/uploads/2021/05/Screenshot-2021-05-31-142423-1200x675.png" alt="My Quang">
+                    <h3>Mì Quảng</h3>
+                    <p class="description">Bánh mì giòn rụm, nhân đầy đủ rau, thịt, chả và patê thơm béo.</p>
+                    <p class="price">**20.000 VNĐ**</p>
+                    <button class="add-to-cart-btn" data-name="Banh Mi" data-price="20000">Thêm vào Giỏ</button>
+                </div>
+                
+                <!-- Thêm thêm một vài món để thấy rõ hiệu ứng cuộn ngang -->
+                 <div class="food-item">
+                    <img src="https://monngonmoingay.com/wp-content/uploads/2024/08/cach-lam-banh-flan-bang-noi-chien-khong-dau-1-1.jpg" alt="Bánh Flan Caramel">
+                    <h3>Bánh Flan Caramel</h3>
+                    <p class="description">Món tráng miệng truyền thống mềm mịn, béo ngậy vị trứng và sữa.</p>
+                    <p class="price">**20.000 VNĐ**</p>
+                    <button class="add-to-cart-btn" data-name="Banh Flan" data-price="20000">Thêm vào Giỏ</button>
+                </div>
+
+                <div class="food-item">
+                    <img src="https://tiemtrariri.com/wp-content/uploads/2024/09/sua-gao-rang-ngon-o-tphcm-thumb.jpg" alt="Sua Gao">
+                    <h3>Sữa Gạo</h3>
+                    <p class="description">Đồ uống nhẹ bụng, thơm mùi gạo rang, ngọt dịu tự nhiên.</p>
+                    <p class="price">**20.000 VNĐ**</p>
+                    <button class="add-to-cart-btn" data-name="Sua Gao" data-price="20000">Thêm vào Giỏ</button>
+                </div>
+                
+            </div>
+        </section>
+
+        <section class="menu-categories">
+            <h2>🍜 Danh Mục Món Ăn</h2>
+            <div class="food-grid">
+                
+                <div class="food-item">
+            <div class="categories-list">
+                <a href="#" class="category-item active">Món Chính</a>
+
+                
+
+                <div class="food-item">
+                    <img src="https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/2024_1_12_638406880045931692_cach-lam-bun-cha-ha-noi-0.jpg" alt="Bún Chả Hà Nội trọn vẹn">
+                    <h3>Bún Chả Hà Nội</h3>
+                    <p class="description">Thịt nướng thơm lừng, bún tươi và nước chấm chua ngọt đặc trưng.</p>
+                    <p class="price">**25.000 VNĐ**</p>
+                    <button class="add-to-cart-btn" data-name="Bun Cha" data-price="25000">Thêm vào Giỏ</button>
+                </div>
+
+                <a href="#" class="category-item">Món Phụ</a>
+
+                <div class="food-item">
+                    <img src="https://133748497.cdn6.editmysite.com/uploads/1/3/3/7/133748497/KU4IHBWI6JM6X2IKA3G72LU4.jpeg" alt="Bánh Mì Thịt Nướng">
+                    <h3>Bánh Mì Thịt Nướng</h3>
+                    <p class="description">Bánh mì giòn rụm, nhân đầy đủ rau, thịt, chả và patê thơm béo.</p>
+                    <p class="price">**20.000 VNĐ**</p>
+                    <button class="add-to-cart-btn" data-name="Banh Mi" data-price="20000">Thêm vào Giỏ</button>
+                </div>
+
+                <a href="#" class="category-item">Đồ Uống</a>
+
+                <div class="food-item">
+                    <img src="https://tiemtrariri.com/wp-content/uploads/2024/09/sua-gao-rang-ngon-o-tphcm-thumb.jpg" alt="Sua Gao">
+                    <h3>Sữa Gạo</h3>
+                    <p class="description">Đồ uống nhẹ bụng, thơm mùi gạo rang, ngọt dịu tự nhiên.</p>
+                    <p class="price">**20.000 VNĐ**</p>
+                    <button class="add-to-cart-btn" data-name="Sua Gao" data-price="20000">Thêm vào Giỏ</button>
+                </div>
+
+                <a href="#" class="category-item">Tráng Miệng</a>
+
+                <div class="food-item">
+                    <img src="https://monngonmoingay.com/wp-content/uploads/2024/08/cach-lam-banh-flan-bang-noi-chien-khong-dau-1-1.jpg" alt="Bánh Flan Caramel">
+                    <h3>Bánh Flan Caramel</h3>
+                    <p class="description">Món tráng miệng truyền thống mềm mịn, béo ngậy vị trứng và sữa.</p>
+                    <p class="price">**20.000 VNĐ**</p>
+                    <button class="add-to-cart-btn" data-name="Banh Flan" data-price="20000">Thêm vào Giỏ</button>
+                </div>
+
+            </div>
+        
+        </section>
+        
+        <!-- Thêm một section khuyến mãi giả định để hoàn thiện cấu trúc -->
+        <section id="promotions" class="hero-section" style="background-color: #2c3e50; padding: 40px 20px;">
+             <h2>🎁 Ưu Đãi Hấp Dẫn Tuần Này</h2>
+             <p>Giảm 15% cho tất cả các món Phở khi đặt trước 10 giờ sáng!</p>
+        </section>
+        
+        <section id="contact" style="text-align: center; margin-top: 40px;">
+            <h2>📞 Liên Hệ Với Chúng Tôi</h2>
+            <p>Địa chỉ: 04 Nguyn, Đông Hà, Tỉnh Quảng Trị</p>
+            <p>Điện thoại: 04082006 | Email: ThaiNguyn.QT</p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; Quán online của Nguyn | <a href="#">quán còn nhiều thiếu sót mong dược góp ý thêm</a></p>
+    </footer>
+
+    <script>
+        // JavaScript cơ bản cho chức năng Giỏ hàng
+        let cartCount = 0;
+        const cartButton = document.getElementById('cart-btn');
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const itemName = e.target.getAttribute('data-name');
+                const itemPrice = e.target.getAttribute('data-price');
+                
+                cartCount++;
+                cartButton.innerHTML = `<i class="fas fa-shopping-cart"></i> Giỏ Hàng (${cartCount})`;
+                
+                // Hiển thị thông báo (thay thế cho alert())
+                const message = `Đã thêm ${itemName} (${itemPrice} VNĐ) vào giỏ hàng. Tổng cộng: ${cartCount} món.`;
+                showMessageBox(message);
+
+                // Ngăn chặn nút submit nếu nó là form
+                e.preventDefault();
+            });
+        });
+
+        // Hàm thay thế alert()
+        function showMessageBox(message) {
+            // Tạo một modal/message box đơn giản
+            let msgBox = document.createElement('div');
+            msgBox.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: #2ecc71;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                opacity: 0;
+                transition: opacity 0.5s, transform 0.5s;
+                transform: translateX(100%);
+            `;
+            msgBox.textContent = message;
+            document.body.appendChild(msgBox);
+
+            // Hiệu ứng xuất hiện
+            setTimeout(() => {
+                msgBox.style.opacity = '1';
+                msgBox.style.transform = 'translateX(0)';
+            }, 10);
+
+            // Hiệu ứng biến mất sau 3 giây
+            setTimeout(() => {
+                msgBox.style.opacity = '0';
+                msgBox.style.transform = 'translateX(100%)';
+                
+                // Xóa khỏi DOM sau khi kết thúc hiệu ứng
+                setTimeout(() => {
+                    msgBox.remove();
+                }, 500); 
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
+
+
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
