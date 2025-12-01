@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Cart - Mua Sắm Độc Đáo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cosmic-dark min-h-screen flex flex-col">
+
+<nav class="bg-cosmic-secondary shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <span class="text-cosmic-accent font-bold text-xl">🌌 Cosmic Cart</span>
+        <div class="flex space-x-4">
+            <button id="nav-home" class="nav-link">Trang Chủ</button>
+            <button id="nav-cart-btn" class="nav-link">Giỏ Hàng (<span id="cart-count">0</span>)</button>
+            <button id="nav-profile" class="nav-link">Trang Cá Nhân</button>
+            <button id="nav-shop" class="nav-link">Gian Hàng</button>
+        </div>
+    </div>
+</nav>
+
+<main id="app" class="flex-grow max-w-7xl mx-auto p-4">
+    <div id="initial-loading" class="text-center py-20 text-gray-400">
+        <div class="animate-spin border-4 border-t-cosmic-accent border-gray-600 rounded-full w-10 h-10 mx-auto"></div>
+        <p class="mt-4">Đang tải ứng dụng...</p>
+    </div>
+</main>
+
+<div id="cart-drawer"
+     class="fixed top-0 right-0 w-80 h-full bg-cosmic-secondary shadow-xl transform translate-x-full transition-transform z-50 overflow-y-auto p-4">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-cosmic-accent font-bold text-lg">Giỏ Hàng</h2>
+        <button id="close-cart-btn" class="text-red-500 font-bold">Đóng</button>
+    </div>
+    <div id="cart-items" class="space-y-2 text-white"></div>
+    <button id="checkout-btn"
+            class="mt-4 w-full bg-cosmic-accent text-cosmic-dark font-bold py-2 rounded-lg">
+        Thanh Toán
+    </button>
+</div>
+
+<footer class="bg-cosmic-secondary border-t border-cosmic-accent/30 mt-auto p-6 text-center text-gray-400">
+    <p>&copy; 2025| Website của Đông. Mọi quyền được bảo lưu.</p>
+    <p>Hotline: <span class="text-cosmic-accent font-bold">0343 544 212</span></p>
+</footer>
+
+<script src="script.js" type="module"></script>
+</body>
+</html>
