@@ -1,0 +1,3181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ - E-commerce Demo Hoàn Chỉnh</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Thiết lập cơ bản */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        /* Cấu trúc Layout Chính */
+        .main-content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 20px 0;
+        }
+
+        /* --- 1. HEADER CSS --- */
+        .main-header {
+            background-color: #f77f00;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            background-image:
+                radial-gradient(white 1px, transparent 0),
+                radial-gradient(white 1px, transparent 0),
+                radial-gradient(white 2px, transparent 0);
+            background-size: 50px 50px, 70px 70px, 90px 90px;
+            background-position: 0 0, 15px 15px, 30px 30px;
+            animation: snowfall 10s linear infinite;
+        }
+        @keyframes snowfall {
+            from { background-position: 0 0, 15px 15px, 30px 30px; }
+            to { background-position: 0 100%, 15px 115px, 30px 130px; }
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 20;
+        }
+        .header-top { display: flex; align-items: center; justify-content: flex-end; width: 100%; margin-bottom: 5px; }
+        .header-bottom { display: flex; align-items: center; width: 100%; justify-content: space-between; }
+        .logo { width: 100px; display: flex; align-items: center; }
+        .logo img { height: 40px; width: auto; vertical-align: middle; filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5)); }
+        .search-container-wrapper { flex-grow: 1; display: flex; justify-content: center; }
+        .search-bar-container { width: 450px; }
+        .search-form { display: flex; background-color: white; border-radius: 4px; overflow: hidden; border: 1px solid #ccc; }
+        .search-input { flex-grow: 1; padding: 8px 10px; border: none; outline: none; font-size: 14px; }
+        .search-button { background-color: white; color: #333; border: none; padding: 8px 15px; cursor: pointer; font-size: 16px; }
+        .cart-wrapper { width: 100px; display: flex; justify-content: center; align-items: center; }
+        .cart-icon { color: white; font-size: 28px; text-decoration: none; position: relative; }
+        .cart-icon:hover { opacity: 0.8; }
+        .cart-icon.active-cart {
+            color: yellow;
+        }
+
+        .header-nav { display: flex; align-items: center; gap: 15px; color: white; }
+        .nav-item, .auth-links a, #userProfileArea a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .nav-item:hover, .auth-links a:hover, #userProfileArea a:hover {
+            text-decoration: underline;
+            color: #fff;
+        }
+
+        /* --- 2. MODAL & SETTINGS CSS --- */
+
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
+        .modal-content { background-color: #fefefe; margin: auto; padding: 30px; border: 1px solid #888;
+            width: 90%; max-width: 400px; border-radius: 8px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; position: absolute;
+            top: 10px; right: 15px; }
+        .close-btn:hover, .close-btn:focus { color: #000; text-decoration: none; cursor: pointer; }
+        .modal-content h2 { margin-bottom: 20px; color: #333; text-align: center; }
+
+        .modal-content label { display: block; margin-top: 15px; }
+        .modal-content label:first-child { margin-top: 0; }
+
+        .password-container { position: relative; width: 100%; }
+
+        .password-container input, .modal-content input[type="text"], .modal-content input[type="email"], .modal-content input[type="file"], .modal-content input[type="password"],
+        .modal-content input[type="number"], .modal-content select, .modal-content textarea {
+            width: 100%;
+            padding: 12px; display: inline-block; border: 1px solid #ccc; box-sizing: border-box; border-radius: 4px;
+        }
+        .password-container input { padding-right: 40px; margin: 0; }
+        .toggle-password { position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;
+            color: #666; font-size: 18px; z-index: 10; }
+        .modal-content button { background-color: #f77f00;
+            color: white; padding: 14px 20px; margin: 15px 0 8px; border: none; cursor: pointer; width: 100%; opacity: 0.9; border-radius: 4px;
+            font-size: 16px; font-weight: bold; }
+        .switch-form { text-align: center; margin-top: 15px; font-size: 14px; }
+
+        /* SETTINGS CSS */
+        .settings-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: block;
+            margin: 0 auto 15px;
+            object-fit: cover;
+            border: 3px solid #f77f00;
+        }
+        .settings-list { list-style: none; padding: 0; }
+        .settings-item {
+            display: flex;
+            justify-content: space-between; align-items: center; padding: 15px 10px;
+            border-bottom: 1px solid #eee; cursor: pointer; transition: background-color 0.2s;
+        }
+        .settings-item:hover { background-color: #fff8f0; }
+        .item-info { flex-grow: 1; text-align: left; margin-left: 10px;}
+        .item-label { display: block; font-weight: bold; color: #333; }
+        .item-value { display: block; font-size: 0.9em; color: #666; }
+        .action-buttons { display: flex; gap: 10px; margin-top: 15px; }
+        .action-buttons button { width: 50%; margin: 0; padding: 10px; }
+        .action-buttons .cancel-btn { background-color: #ccc; }
+
+        /* --- 3. NAVIGATION & ACTIVE STATE --- */
+        .category-bar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            width: 100%;
+        }
+        .category-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: flex-start;
+            gap: 40px;
+            padding: 10px 20px;
+        }
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            color: #333;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 2px solid transparent;
+            transition: border-bottom 0.3s, color 0.3s;
+            cursor: pointer;
+        }
+
+        .category-item i {
+            display: inline-block;
+            font-size: 18px;
+            color: #f77f00;
+        }
+        .category-item:hover {
+            color: #f77f00;
+        }
+        .category-item.active {
+            color: #f77f00;
+            border-bottom: 2px solid #f77f00;
+        }
+
+        /* --- 4. SLIDER BANNER CSS --- */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .slides { display: flex; transition: transform 0.5s ease-in-out; height: 100%; }
+        .slide { min-width: 100%; position: relative; height: 100%; display: flex; justify-content: center;
+            align-items: center; text-align: center; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .slide-caption { position: absolute; bottom: 20px;
+            background-color: rgba(0, 0, 0, 0.5); color: white; padding: 10px 20px; border-radius: 5px; font-size: 1.2em; font-weight: bold; }
+        .slider-nav button { position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 15px; cursor: pointer; z-index: 50; font-size: 18px; transition: background 0.3s; }
+        .slider-nav button:hover { background: rgba(0, 0, 0, 0.8); }
+        .prev-btn { left: 0; border-radius: 0 4px 4px 0; }
+        .next-btn { right: 0; border-radius: 4px 0 0 4px; }
+
+        /* --- 5. PRODUCT, ORDER & CART CSS --- */
+        .main-section {
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            min-height: 500px;
+            display: none;
+        }
+        .main-section.active {
+            display: block;
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .product-info {
+            padding: 15px;
+            text-align: center;
+        }
+        .product-info h4 {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .product-price {
+            font-size: 1.2em;
+            color: #f77f00;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .add-to-cart-btn {
+            background-color: #f77f00;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        .add-to-cart-btn:hover {
+            background-color: #e66a00;
+        }
+
+        /* Product Category Filter CSS (Cấp 1) */
+        .products-category-filter {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 2px solid #f77f00;
+            margin-bottom: 10px;
+            overflow-x: auto;
+        }
+        .products-category-filter .category-btn {
+            background-color: #f7f7f7;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .products-category-filter .category-btn.active {
+            background-color: #f77f00;
+            color: white;
+            border-color: #f77f00;
+            font-weight: bold;
+        }
+        /* Product Sub-Category Filter CSS (Cấp 2) */
+        .products-sub-category-filter {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            padding: 5px 0 15px 0;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+        .products-sub-category-filter .subcategory-btn {
+            background-color: #ffffff;
+            color: #666;
+            border: 1px solid #e0e0e0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .products-sub-category-filter .subcategory-btn:hover {
+            background-color: #f0f0f0;
+        }
+        .products-sub-category-filter .subcategory-btn.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+            font-weight: bold;
+        }
+        /* Order Status Filter CSS */
+        .order-status-filter {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            overflow-x: auto;
+        }
+
+        .status-btn {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .status-btn:hover {
+            background-color: #e0e0e0;
+        }
+        .status-btn.active {
+            background-color: #f77f00;
+            color: white;
+            border-color: #f77f00;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        /* Order List */
+        .order-list {
+            margin-top: 20px;
+        }
+        .order-item {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .order-id {
+            font-weight: bold;
+            color: #555;
+        }
+        .order-status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        .status-pending { background-color: #fff3cd; color: #856404; }
+        .status-confirmed { background-color: #d1ecf1; color: #0c5460; }
+        .status-ready_to_ship { background-color: #e2e3e5; color: #383d41; }
+        .status-shipping { background-color: #cce5ff; color: #004085; }
+        .status-delivered { background-color: #d4edda; color: #155724; }
+        .status-cancelled { background-color: #f8d7da; color: #721c24; }
+        .order-details p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: #777;
+        }
+        .order-details strong { color: #333; }
+        .order-total {
+            text-align: right;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #f77f00;
+            margin-top: 10px;
+        }
+
+        /* Cart Layout */
+        .cart-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .cart-table {
+            flex-grow: 1;
+            width: 70%;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+        .cart-table th, .cart-table td {
+            border: 1px solid #eee;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .cart-table th {
+            background-color: #f77f00;
+            color: white;
+            font-weight: bold;
+        }
+        .item-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .item-detail img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .cart-table input[type="number"] {
+            width: 60px;
+            padding: 5px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .remove-btn:hover {
+            color: #c0392b;
+        }
+
+        /* Cart Summary */
+        .cart-summary {
+            width: 30%;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            align-self: flex-start;
+        }
+        .cart-summary h3 {
+            border-bottom: 2px solid #f77f00;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        .summary-total {
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+            margin-top: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #f77f00;
+        }
+        .checkout-btn {
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+        .checkout-btn:hover {
+            background-color: #27ae60;
+        }
+        .continue-shopping-btn {
+            background-color: #95a5a6;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        /* Checkout Layout CSS */
+        .checkout-layout {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .shipping-info {
+            width: 60%;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .final-summary {
+            width: 40%;
+            padding: 20px;
+            border: 1px solid #f77f00; /* Viền nổi bật */
+            border-radius: 8px;
+            background-color: #fff;
+            align-self: flex-start;
+        }
+        .shipping-info label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .shipping-info input[type="text"],
+        .shipping-info input[type="tel"],
+        .shipping-info textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        .payment-method label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        .final-summary h3 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        #checkoutOrderItems {
+            max-height: 250px;
+            overflow-y: auto;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .checkout-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .checkout-item span:first-child {
+            color: #555;
+        }
+        .checkout-item span:last-child {
+            font-weight: bold;
+        }
+
+        .cart-table input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* --- Toast Notification CSS --- */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.3s ease-in-out, transform 0.4s ease-out;
+            min-width: 250px;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .toast.success {
+            background-color: #2ecc71;
+            /* Xanh lá */
+            border-left: 5px solid #27ae60;
+        }
+        .toast.warning {
+            background-color: #f39c12;
+            /* Vàng cam */
+            border-left: 5px solid #e67e22;
+        }
+        .toast.error {
+            background-color: #e74c3c;
+            /* Đỏ */
+            border-left: 5px solid #c0392b;
+        }
+
+        /* --- ADMIN DASHBOARD CSS --- */
+        #admin-dashboard-section {
+            background-color: #fff;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            min-height: 80vh;
+        }
+
+        .admin-nav-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .admin-nav-btn {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s, color 0.2s;
+            white-space: nowrap;
+        }
+        .admin-nav-btn:hover {
+            background-color: #e0e0e0;
+        }
+        .admin-nav-btn.active {
+            background-color: #f77f00;
+            color: white;
+            border-color: #f77f00;
+        }
+
+        .admin-content {
+            display: none;
+            padding: 10px;
+        }
+        .admin-content.active {
+            display: block;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .admin-table th, .admin-table td {
+            border: 1px solid #eee;
+            padding: 12px;
+            text-align: left;
+        }
+        .admin-table th {
+            background-color: #34495e;
+            color: white;
+            font-size: 14px;
+        }
+        .admin-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .admin-table button {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            width: auto;
+        }
+        .admin-table button.edit-btn { background-color: #3498db; color: white; }
+        .admin-table button.delete-btn { background-color: #e74c3c; color: white; }
+        .admin-table button:hover { opacity: 0.8; }
+
+        .add-product-btn {
+            background-color: #2ecc71;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+            width: auto;
+        }
+        .add-product-btn:hover {
+            background-color: #27ae60;
+        }
+
+        /* Order status dropdown in Admin */
+        .status-dropdown {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="toast-container">
+    </div>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="header-top">
+                <nav class="header-nav">
+                    <a href="#" class="nav-item"> Thông Báo </a>
+                    <a href="#" class="nav-item"> Trợ Giúp </a>
+
+                    <span class="nav-item auth-links" id="authLinks">
+                        <a onclick="openRegisterModal()"> Đăng Ký </a>  |
+                        <a onclick="openLoginModal()"> Đăng Nhập </a>
+                    </span>
+
+                    <span class="nav-item user-profile-area" id="userProfileArea" style="display: none; gap: 15px;">
+                        <a href="#" class="nav-item" style="color: yellow; font-weight: normal;"
+                            id="welcomeUserText"></a>
+                        <a href="#" class="profile-avatar" onclick="openProfileModal()">
+                            <i class="fas fa-user-circle" style="font-size: 24px;"></i>
+                        </a>
+                        <a href="#" class="nav-item" onclick="handleLogout()"> Đăng Xuất </a>
+                    </span>
+                </nav>
+            </div>
+
+            <div class="header-bottom">
+                <div class="logo">
+                    <img src="https://www.photoroom.com/vi/cac-cong-cu/bo-dien-canh" alt="Logo Công ty">
+                </div>
+
+                <div class="search-container-wrapper">
+                    <div class="search-bar-container">
+                        <form class="search-form" onsubmit="return handleSearch(event)">
+                            <input type="text" placeholder="Tìm sản phẩm" class="search-input" id="searchInput">
+                            <button type="submit" class="search-button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="cart-wrapper">
+                    <a href="#" class="cart-icon" id="header-cart-icon" onclick="showCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="category-bar">
+        <div class="category-container">
+            <a id="nav-home" class="category-item active" onclick="showContent('home-section', this)">
+                <i class="fas fa-store"></i>
+                Thông Tin Về Cửa Hàng
+            </a>
+            <a id="nav-products" class="category-item" onclick="showContent('products-section', this)">
+                <i class="fas fa-box"></i>
+                Sản Phẩm
+            </a>
+            <a id="nav-orders" class="category-item" onclick="showContent('orders-section', this)">
+                <i class="fas fa-receipt"></i>
+                Đơn Hàng
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content-container">
+
+        <div class="slider-container">
+            <div class="slides" id="imageSlider">
+                <div class="slide">
+                    <img src="https://via.placeholder.com/1200x350/FFC300/FFFFFF?text=DEAL+HOT+TRONG+NGAY" alt="Banner 1">
+                    <div class="slide-caption"> Giảm giá lên đến 50% </div>
+                </div>
+                <div class="slide">
+                    <img src="https://via.placeholder.com/1200x350/2C3E50/FFFFFF?text=SẢN+PHẨM+MỚI+VỀ" alt="Banner 2">
+                    <div class="slide-caption"> Khám phá bộ sưu tập mới nhất </div>
+                </div>
+                <div class="slide">
+                    <img src="https://via.placeholder.com/1200x350/F77F00/FFFFFF?text=MIỄN+PHÍ+VẬN+CHUYỂN" alt="Banner 3">
+                    <div class="slide-caption"> Áp dụng cho mọi đơn hàng từ 500K </div>
+                </div>
+            </div>
+            <div class="slider-nav">
+                <button class="prev-btn" onclick="moveSlider(-1)">❮</button>
+                <button class="next-btn" onclick="moveSlider(1)">❯</button>
+            </div>
+        </div>
+
+        <section id="home-section" class="main-section active">
+            <h2> 🏠 Thông Tin Về Cửa Hàng </h2>
+            <p style="margin-top: 15px;"> Chào mừng đến với cửa hàng demo!
+                ...</p>
+        </section>
+
+        <section id="products-section" class="main-section">
+            <div class="products-category-filter" id="productsCategoryFilter">
+                </div>
+            <div class="products-sub-category-filter" id="productsSubCategoryFilter">
+                </div>
+            <h2> Danh Sách Sản Phẩm </h2>
+            <div class="product-grid" id="productGrid">
+                </div>
+        </section>
+
+        <section id="cart-section" class="main-section">
+            <h2> 🛒 Giỏ Hàng Của Tôi </h2>
+            <div class="cart-container">
+                <table class="cart-table" id="cartTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;"><input type="checkbox" id="checkAllCartItems" onchange="toggleSelectAll(this.checked)"></th>
+                            <th style="text-align: left;">Sản Phẩm</th>
+                            <th style="width: 120px;">Giá</th>
+                            <th style="width: 100px;">Số Lượng</th>
+                            <th style="width: 150px;">Tổng Cộng</th>
+                            <th style="width: 80px;">Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartItemsContainer">
+                        </tbody>
+                </table>
+                <div class="cart-summary">
+                    <h3> Tóm Tắt Đơn Hàng </h3>
+                    <div class="summary-line">
+                        <span> Tạm tính (<span id="totalItemsSummary">0</span> sản phẩm được chọn): </span>
+                        <span id="subtotalSummary">0 VNĐ</span>
+                    </div>
+                    <div class="summary-line">
+                        <span> Phí vận chuyển: </span>
+                        <span>30.000 VNĐ</span>
+                    </div>
+                    <div class="summary-line summary-total">
+                        <span> TỔNG CỘNG: </span>
+                        <span id="grandTotalSummary">30.000 VNĐ</span>
+                    </div>
+                    <button class="checkout-btn" onclick="showCheckout()">
+                        TIẾN HÀNH THANH TOÁN
+                    </button>
+                    <button class="continue-shopping-btn" onclick="showContent('products-section', document.getElementById('nav-products'))">
+                        <i class="fas fa-chevron-left"></i> Tiếp Tục Mua Sắm
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="checkout-section" class="main-section">
+            <h2> 📝 Hoàn Tất Đơn Hàng </h2>
+            <div class="checkout-layout">
+                <div class="shipping-info">
+                    <h3> 1. Thông Tin Vận Chuyển </h3>
+                    <form id="shippingForm" onsubmit="return false;">
+                        <label for="recipientName"> Họ và Tên người nhận </label>
+                        <input type="text" id="recipientName" required placeholder="Nhập tên người nhận">
+
+                        <label for="recipientPhone"> Số Điện Thoại </label>
+                        <input type="tel" id="recipientPhone" required placeholder="Nhập số điện thoại">
+
+                        <label for="shippingAddress"> Địa Chỉ Giao Hàng </label>
+                        <textarea id="shippingAddress" rows="3" required placeholder="Nhập địa chỉ chi tiết"></textarea>
+
+                        <h3 style="margin-top: 30px;"> 2. Phương Thức Thanh Toán </h3>
+                        <div class="payment-method">
+                            <label><input type="radio" name="payment" value="COD" checked> Thanh toán khi nhận hàng (COD) </label><br>
+                            <label><input type="radio" name="payment" value="Bank"> Chuyển khoản ngân hàng </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="final-summary">
+                    <h3> 3. Chi Tiết Đơn Hàng </h3>
+                    <div id="checkoutOrderItems">
+                        <p style="text-align: center; color: #999;"> Không có sản phẩm nào được chọn. </p>
+                    </div>
+                    <div class="summary-line" style="margin-top: 20px;">
+                        <span> Tạm tính (<span id="totalItemsCheckout">0</span> sản phẩm): </span>
+                        <span id="subtotalCheckout">0 VNĐ</span>
+                    </div>
+                    <div class="summary-line">
+                        <span> Phí vận chuyển: </span>
+                        <span id="shippingCheckout">30.000 VNĐ</span>
+                    </div>
+                    <div class="summary-line summary-total">
+                        <span> TỔNG THANH TOÁN: </span>
+                        <span id="grandTotalCheckout">30.000 VNĐ</span>
+                    </div>
+                    <button class="checkout-btn" style="background-color: #f77f00;" onclick="placeOrder()">
+                        HOÀN TẤT ĐẶT HÀNG
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="orders-section" class="main-section">
+            <h2> 📦 Lịch Sử Đơn Hàng </h2>
+            <div class="order-status-filter" id="userOrderStatusFilter">
+                <button class="status-btn active" data-status="all" onclick="filterOrders('all', this)"> Tất Cả </button>
+                <button class="status-btn" data-status="pending" onclick="filterOrders('pending', this)"> Chờ xác nhận </button>
+                <button class="status-btn" data-status="confirmed" onclick="filterOrders('confirmed', this)"> Đã xác nhận </button>
+                <button class="status-btn" data-status="shipping" onclick="filterOrders('shipping', this)"> Đang giao hàng </button>
+                <button class="status-btn" data-status="delivered" onclick="filterOrders('delivered', this)"> Đã giao hàng </button>
+                <button class="status-btn" data-status="cancelled" onclick="filterOrders('cancelled', this)"> Đã hủy </button>
+            </div>
+            <div class="order-list" id="orderListContainer">
+                </div>
+        </section>
+
+        <section id="admin-dashboard-section" class="main-section">
+            <h2 style="color: #F77F00;"><i class="fas fa-tools"></i> Bảng Điều Khiển Admin</h2>
+            <hr style="margin-bottom: 20px;">
+            <div class="admin-nav-bar">
+                <button class="admin-nav-btn active" data-target="admin-orders" onclick="showAdminContent('admin-orders', this)"> Quản lý Đơn Hàng </button>
+                <button class="admin-nav-btn" data-target="admin-products" onclick="showAdminContent('admin-products', this)"> Quản lý Hàng Hóa </button>
+                <button class="admin-nav-btn" data-target="admin-users" onclick="showAdminContent('admin-users', this)"> Quản lý Khách Hàng </button>
+                <button class="admin-nav-btn" data-target="admin-store-info" onclick="showAdminContent('admin-store-info', this)"> Thông tin Cửa Hàng </button>
+            </div>
+            <div id="admin-content-container">
+
+                <div id="admin-orders" class="admin-content active">
+                    <h3> Danh Sách Đơn Hàng </h3>
+                    <div class="order-status-filter" id="adminOrderStatusFilter">
+                        <button class="status-btn active" data-status="all" onclick="filterAdminOrders('all', this)"> Tất Cả </button>
+                        <button class="status-btn" data-status="pending" onclick="filterAdminOrders('pending', this)"> Chờ xác nhận </button>
+                        <button class="status-btn" data-status="confirmed" onclick="filterAdminOrders('confirmed', this)"> Đã xác nhận </button>
+                        <button class="status-btn" data-status="ready_to_ship" onclick="filterAdminOrders('ready_to_ship', this)"> Đang đóng gói </button>
+                        <button class="status-btn" data-status="shipping" onclick="filterAdminOrders('shipping', this)"> Đang giao hàng </button>
+                        <button class="status-btn" data-status="delivered" onclick="filterAdminOrders('delivered', this)"> Đã giao hàng </button>
+                        <button class="status-btn" data-status="cancelled" onclick="filterAdminOrders('cancelled', this)"> Đã hủy </button>
+                    </div>
+                    <div id="adminOrderListContainer">
+                        </div>
+                </div>
+
+                <div id="admin-products" class="admin-content">
+                    <h3> Quản lý Sản Phẩm </h3>
+                    <button class="add-product-btn" onclick="openProductModal('add')">
+                        <i class="fas fa-plus-circle"></i> Thêm Sản Phẩm Mới
+                    </button>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th style="width: 70px;">Ảnh</th>
+                                <th>Tên Sản Phẩm</th>
+                                <th style="width: 150px;">Danh Mục</th>
+                                <th style="width: 120px;">Giá</th>
+                                <th style="width: 150px;">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminProductTableBody">
+                            </tbody>
+                    </table>
+                </div>
+
+                <div id="admin-users" class="admin-content">
+                    <h3> Danh Sách Khách Hàng </h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">STT</th>
+                                <th style="width: 120px;">Username</th>
+                                <th>Tên Đầy Đủ</th>
+                                <th style="width: 250px;">Email</th>
+                                <th style="width: 200px;">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUserTableBody">
+                            </tbody>
+                    </table>
+                </div>
+
+                <div id="admin-store-info" class="admin-content">
+                    <h3> Quản lý Thông Tin Cửa Hàng </h3>
+                    <form id="storeInfoForm" onsubmit="return handleUpdateStoreInfo(event)">
+                        <label for="storeName"> Tên Cửa Hàng </label>
+                        <input type="text" id="storeName" value="E-commerce Demo Shop" required>
+
+                        <label for="storeHotline"> Hotline </label>
+                        <input type="tel" id="storeHotline" value="0800 123 456" required>
+
+                        <label for="storeAddress"> Địa Chỉ </label>
+                        <textarea id="storeAddress" rows="3">123 Đường Công Nghệ, Quận Đổi Mới, TP. Thông Minh</textarea>
+
+                        <button type="submit" style="width: 250px; margin-top: 20px; background-color: #3498db;">
+                            <i class="fas fa-save"></i> Lưu Thông Tin Cửa Hàng
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLoginModal()">×</span>
+            <h2> Đăng Nhập 🔑 </h2>
+            <form id="loginForm" onsubmit="return handleLogin(event)">
+                <label for="username"><b> Tên Đăng Nhập hoặc Email </b></label>
+                <input type="text" placeholder="Nhập Tên Đăng Nhập hoặc Email" name="username" id="loginUsername" required>
+
+                <label for="password"><b> Mật khẩu </b></label>
+                <div class="password-container">
+                    <input type="password" placeholder="Nhập mật khẩu" name="password" id="loginPassword" required>
+                    <span class="toggle-password" onclick="togglePassword('loginPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <p id="loginMessage" style="color: red; margin-top: 10px; text-align: center;"></p>
+
+                <button type="submit"> Đăng Nhập </button>
+            </form>
+            <div class="switch-form">
+                Chưa có tài khoản? <a onclick="switchToRegister()"> Đăng ký ngay </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeRegisterModal()">×</span>
+            <h2> Đăng Ký Tài Khoản 📝 </h2>
+            <form id="registerForm" onsubmit="return handleRegister(event)">
+
+                <label for="reg_name"><b> Tên Đầy Đủ </b></label>
+                <input type="text" placeholder="Nhập tên đầy đủ" name="reg_name" required>
+
+                <label for="reg_phone"><b> Số Điện Thoại </b></label>
+                <input type="tel" placeholder="Nhập số điện thoại" name="reg_phone" required>
+
+                <label for="reg_email"><b> Email </b></label>
+                <input type="email" placeholder="Nhập địa chỉ email" name="reg_email" required>
+
+                <label for="reg_username"><b> Tên Đăng Nhập </b></label>
+                <input type="text" placeholder="Nhập tên đăng nhập" name="reg_username" required>
+
+                <label for="reg_password"><b> Mật Khẩu </b></label>
+                <div class="password-container">
+                    <input type="password" placeholder="Nhập mật khẩu" name="reg_password" id="regPassword" required>
+                    <span class="toggle-password" onclick="togglePassword('regPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <p id="registerMessage" style="color: red; margin-top: 10px; text-align: center;"></p>
+
+                <button type="submit"> Đăng Ký </button>
+            </form>
+            <div class="switch-form">
+                Đã có tài khoản? <a onclick="switchToLogin()"> Đăng nhập ngay </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="profileModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="closeProfileModal()">×</span>
+            <h2 style="text-align: left;"><i class="fas fa-cogs"></i> Cài Đặt Tài Khoản </h2>
+            <hr style="margin-bottom: 20px; border-color: #f0f0f0;">
+
+            <img id="displayNameSettings" class="settings-avatar" src="" alt="Avatar">
+            <p style="text-align: center; font-size: 1.2em; font-weight: bold; margin-bottom: 20px;">
+                <span id="displayNameSettings"></span>
+                <span id="isAdminBadge" style="background-color: #f77f00; color: white; padding: 2px 6px; font-size: 0.7em; border-radius: 4px; vertical-align: middle; display: none;">ADMIN</span>
+            </p>
+
+            <ul class="settings-list">
+                <li class="settings-item" onclick="openChangeUsernameModal()">
+                    <div class="item-icon"><i class="fas fa-user"></i></div>
+                    <div class="item-info">
+                        <span class="item-label"> Tên Đăng Nhập </span>
+                        <span class="item-value" id="currentUsername"></span>
+                    </div>
+                    <div class="item-action"><i class="fas fa-chevron-right"></i></div>
+                </li>
+                <li class="settings-item" onclick="openChangeNameModal()">
+                    <div class="item-icon"><i class="fas fa-id-card"></i></div>
+                    <div class="item-info">
+                        <span class="item-label"> Tên </span>
+                        <span class="item-value" id="currentName"></span>
+                    </div>
+                    <div class="item-action"><i class="fas fa-chevron-right"></i></div>
+                </li>
+                <li class="settings-item" onclick="openChangeAvatarModal()">
+                    <div class="item-icon"><i class="fas fa-camera"></i></div>
+                    <div class="item-info">
+                        <span class="item-label"> Ảnh Đại Diện </span>
+                        <span class="item-value"> Thay đổi ảnh đại diện </span>
+                    </div>
+                    <div class="item-action"><i class="fas fa-chevron-right"></i></div>
+                </li>
+                <li class="settings-item" onclick="openChangePhoneModal()">
+                    <div class="item-icon"><i class="fas fa-phone"></i></div>
+                    <div class="item-info">
+                        <span class="item-label"> Số Điện Thoại </span>
+                        <span class="item-value" id="currentPhone"></span>
+                    </div>
+                    <div class="item-action"><i class="fas fa-chevron-right"></i></div>
+                </li>
+                <li class="settings-item" onclick="openChangeEmailModal()">
+                    <div class="item-icon"><i class="fas fa-envelope"></i></div>
+                    <div class="item-info">
+                        <span class="item-label"> Gmail </span>
+                        <span class="item-value" id="currentEmail"></span>
+                    </div>
+                    <div class="item-action"><i class="fas fa-chevron-right"></i></div>
+                </li>
+                <li class="settings-item" onclick="openChangePasswordModal()">
+                    <div class="item-icon"><i class="fas fa-lock"></i></div>
+                    <div class="item-info">
+                        <span class="item-label"> Mật Khẩu </span>
+                        <span class="item-value"> Thay đổi mật khẩu </span>
+                    </div>
+                    <div class="item-action"><i class="fas fa-chevron-right"></i></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="changeUsernameModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="closeChangeUsernameModal()">×</span>
+            <h2> Thay Đổi Tên Đăng Nhập </h2>
+            <form id="formChangeUsername" onsubmit="return handleUpdateUsername(event)">
+                <label for="inputNewUsername"><b> Tên Đăng Nhập Mới </b></label>
+                <input type="text" name="inputNewUsername" id="inputNewUsername" required placeholder="Nhập tên đăng nhập mới">
+
+                <label for="inputConfirmPasswordUsername"><b> Xác Nhận Mật Khẩu Hiện Tại </b></label>
+                <div class="password-container">
+                    <input type="password" name="inputConfirmPasswordUsername" id="inputConfirmPasswordUsername" required placeholder="Nhập mật khẩu hiện tại">
+                    <span class="toggle-password" onclick="togglePassword('inputConfirmPasswordUsername', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <p id="usernameMessage" style="color: red; margin-top: 10px; text-align: center;"></p>
+
+                <div class="action-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeChangeUsernameModal()"> Hủy </button>
+                    <button type="submit"> Xác Nhận Thay Đổi </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="changeNameModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="closeChangeNameModal()">×</span>
+            <h2> Thay Đổi Tên Hiển Thị </h2>
+            <form id="formChangeName" onsubmit="return handleUpdateName(event)">
+                <label for="inputNewName"><b> Tên Hiển Thị Mới </b></label>
+                <input type="text" name="inputNewName" id="inputNewName" required placeholder="Nhập tên hiển thị mới">
+
+                <label for="inputConfirmPasswordName"><b> Xác Nhận Mật Khẩu Hiện Tại </b></label>
+                <div class="password-container">
+                    <input type="password" name="inputConfirmPasswordName" id="inputConfirmPasswordName" required placeholder="Nhập mật khẩu hiện tại">
+                    <span class="toggle-password" onclick="togglePassword('inputConfirmPasswordName', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeChangeNameModal()"> Hủy </button>
+                    <button type="submit"> Xác Nhận Thay Đổi </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="changeEmailModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="closeChangeEmailModal()">×</span>
+            <h2> Thay Đổi Email </h2>
+            <form id="formChangeEmail" onsubmit="return handleUpdateEmail(event)">
+                <label for="inputNewEmail"><b> Email Mới </b></label>
+                <input type="email" name="inputNewEmail" id="inputNewEmail" required placeholder="Nhập email mới">
+
+                <label for="inputConfirmPasswordEmail"><b> Xác Nhận Mật Khẩu Hiện Tại </b></label>
+                <div class="password-container">
+                    <input type="password" name="inputConfirmPasswordEmail" id="inputConfirmPasswordEmail" required placeholder="Nhập mật khẩu hiện tại">
+                    <span class="toggle-password" onclick="togglePassword('inputConfirmPasswordEmail', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <p id="emailMessage" style="color: red; margin-top: 10px; text-align: center;"></p>
+
+                <div class="action-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeChangeEmailModal()"> Hủy </button>
+                    <button type="submit"> Xác Nhận Thay Đổi </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="changePhoneModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="closeChangePhoneModal()">×</span>
+            <h2> Thay Đổi Số Điện Thoại </h2>
+            <form id="formChangePhone" onsubmit="return handleUpdatePhone(event)">
+                <label for="inputCurrentPhone"><b> Số Điện Thoại Hiện Tại </b></label>
+                <input type="tel" name="inputCurrentPhone" id="inputCurrentPhone" disabled style="background-color: #f0f0f0;">
+
+                <label for="inputNewPhone"><b> Số Điện Thoại Mới </b></label>
+                <input type="tel" name="inputNewPhone" id="inputNewPhone" required placeholder="Nhập số điện thoại mới">
+
+                <label for="inputConfirmPasswordPhone"><b> Xác Nhận Mật Khẩu Hiện Tại </b></label>
+                <div class="password-container">
+                    <input type="password" name="inputConfirmPasswordPhone" id="inputConfirmPasswordPhone" required placeholder="Nhập mật khẩu hiện tại">
+                    <span class="toggle-password" onclick="togglePassword('inputConfirmPasswordPhone', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <p id="phoneMessage" style="color: red; margin-top: 10px; text-align: center;"></p>
+
+                <div class="action-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeChangePhoneModal()"> Hủy </button>
+                    <button type="submit"> Xác Nhận Thay Đổi </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="closeChangePasswordModal()">×</span>
+            <h2> Thay Đổi Mật Khẩu </h2>
+            <form id="formChangePassword" onsubmit="return handleUpdatePassword(event)">
+                <label for="inputCurrentPassword"><b> Mật Khẩu Hiện Tại </b></label>
+                <div class="password-container">
+                    <input type="password" name="inputCurrentPassword" id="inputCurrentPassword" required placeholder="Nhập mật khẩu hiện tại">
+                    <span class="toggle-password" onclick="togglePassword('inputCurrentPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <label for="inputNewPassword"><b> Mật Khẩu Mới </b></label>
+                <div class="password-container">
+                    <input type="password" name="inputNewPassword" id="inputNewPassword" required placeholder="Nhập mật khẩu mới">
+                    <span class="toggle-password" onclick="togglePassword('inputNewPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <label for="inputConfirmNewPassword"><b> Xác Nhận Mật Khẩu Mới </b></label>
+                <div class="password-container">
+                    <input type="password" name="inputConfirmNewPassword" id="inputConfirmNewPassword" required placeholder="Nhập lại mật khẩu mới">
+                    <span class="toggle-password" onclick="togglePassword('inputConfirmNewPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+
+                <p id="passwordMessage" style="color: red; margin-top: 10px; text-align: center;"></p>
+
+                <div class="action-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeChangePasswordModal()"> Hủy </button>
+                    <button type="submit"> Xác Nhận Thay Đổi </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="changeAvatarModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-btn" onclick="closeChangeAvatarModal()">×</span>
+            <h2> Thay Đổi Ảnh Đại Diện </h2>
+            <form id="formChangeAvatar" onsubmit="return handleUpdateAvatar(event)">
+
+                <img id="previewNewAvatar" class="settings-avatar" src="" alt="Avatar Preview">
+
+                <label for="inputNewAvatarUrl"><b> URL Ảnh Đại Diện Mới </b></label>
+                <input type="text" name="inputNewAvatarUrl" id="inputNewAvatarUrl" required placeholder="Dán URL hình ảnh mới"
+                    oninput="document.getElementById('previewNewAvatar').src = this.value || 'https://via.placeholder.com/100/CCCCCC/808080?text=USER'">
+
+                <p style="color: #999; font-size: 0.9em; margin-top: 10px;">* Chỉ chấp nhận định dạng URL.</p>
+
+                <div class="action-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeChangeAvatarModal()"> Hủy </button>
+                    <button type="submit"> Cập Nhật </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="logoutConfirmModal" class="modal">
+        <div class="modal-content" style="max-width: 350px;">
+            <span class="close-btn" onclick="closeLogoutConfirmModal()">×</span>
+            <h2> Xác Nhận Đăng Xuất </h2>
+            <p style="text-align: center; margin-top: 15px;"> Bạn có chắc chắn muốn đăng xuất khỏi tài khoản này? </p>
+            <div class="action-buttons">
+                <button type="button" class="cancel-btn" onclick="closeLogoutConfirmModal()"> Hủy </button>
+                <button type="button" style="background-color: #e74c3c;" onclick="confirmLogout()"> Đăng Xuất </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-btn" onclick="closeProductModal()">×</span>
+            <h2 id="productModalTitle"> Thêm Sản Phẩm Mới </h2>
+            <form id="productForm" onsubmit="return handleSaveProduct(event)">
+                <input type="hidden" id="productIdHidden">
+
+                <label for="productName"><b> Tên Sản Phẩm </b></label>
+                <input type="text" id="productName" required placeholder="Nhập tên sản phẩm">
+
+                <label for="productPrice"><b> Giá (VNĐ) </b></label>
+                <input type="number" id="productPrice" required min="1000" placeholder="Nhập giá sản phẩm">
+
+                <label for="productCategory"><b> Danh Mục Chính </b></label>
+                <select id="productCategory" required onchange="renderProductSubCategories(this.value)">
+                    <option value="">-- Chọn Danh Mục --</option>
+                    <option value="motorbike">Xe Máy</option>
+                    <option value="car">Xe Ô Tô</option>
+                    <option value="oil">Nhớt</option>
+                    <option value="part">Phụ Tùng Xe Máy</option>
+                </select>
+
+                <label for="productSubCategory"><b> Danh Mục Phụ </b></label>
+                <select id="productSubCategory" required>
+                    <option value="">-- Chọn Danh Mục Phụ --</option>
+                </select>
+
+                <label for="productImg"><b> URL Hình Ảnh </b></label>
+                <input type="text" id="productImg" required placeholder="Dán URL hình ảnh sản phẩm">
+
+                <div class="action-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeProductModal()"> Hủy </button>
+                    <button type="submit" id="productModalSaveBtn"> Lưu Sản Phẩm </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="userDetailModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-btn" onclick="document.getElementById('userDetailModal').style.display='none'">×</span>
+            <h2 style="text-align: left;"><i class="fas fa-user-circle"></i> Thông Tin Chi Tiết Khách Hàng</h2>
+            <hr style="margin-bottom: 20px; border-color: #f0f0f0;">
+            <div id="userDetailContent">
+                <img id="userAvatarModal" class="settings-avatar" src="" alt="Avatar">
+                
+                <p style="margin-top: 15px;"><label><b>Tên đầy đủ:</b></label> <span id="userNameDetail"></span></p>
+                <p><label><b>Tên đăng nhập:</b></label> <span id="userUsernameDetail"></span></p>
+                <p><label><b>Email:</b></label> <span id="userEmailDetail"></span></p>
+                <p><label><b>Số điện thoại:</b></label> <span id="userPhoneDetail"></span></p>
+                
+                <p style="margin-top: 20px; color: #e74c3c; font-size: 0.9em;"><em>* Mật khẩu không được hiển thị vì lý do bảo mật.</em></p>
+                
+                <button type="button" style="background-color: #95a5a6; margin-top: 20px;" onclick="document.getElementById('userDetailModal').style.display='none'">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // --- 1. BIẾN GLOBAL VÀ DỮ LIỆU MẪU ---
+
+        let isLoggedIn = false;
+        let currentUser = null;
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const mainSections = document.querySelectorAll('.main-section');
+        const categoryItems = document.querySelectorAll('.category-item');
+        const authLinks = document.getElementById('authLinks');
+        const userProfileArea = document.getElementById('userProfileArea');
+        const welcomeUserText = document.getElementById('welcomeUserText');
+        const headerBottom = document.querySelector('.header-bottom');
+        const categoryBar = document.querySelector('.category-bar');
+        const headerCartIcon = document.getElementById('header-cart-icon');
+
+        // Modals
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const profileModal = document.getElementById('profileModal');
+        const logoutConfirmModal = document.getElementById('logoutConfirmModal');
+
+        // Sub-modals
+        const changeUsernameModal = document.getElementById('changeUsernameModal');
+        const changeNameModal = document.getElementById('changeNameModal');
+        const changeEmailModal = document.getElementById('changeEmailModal');
+        const changePhoneModal = document.getElementById('changePhoneModal');
+        const changePasswordModal = document.getElementById('changePasswordModal');
+        const changeAvatarModal = document.getElementById('changeAvatarModal');
+
+
+        const productData = JSON.parse(localStorage.getItem('productData')) || [
+            { id: 1, name: 'Xe Máy Honda Wave Alpha', price: 18000000, img: 'https://via.placeholder.com/250x200/3498db/FFFFFF?text=Wave+Alpha', category: 'motorbike', subCategory: 'xe_so' },
+            { id: 2, name: 'Xe Máy Vespa Sprint', price: 75000000, img: 'https://via.placeholder.com/250x200/e67e22/FFFFFF?text=Vespa+Sprint', category: 'motorbike', subCategory: 'xe_ga' },
+            { id: 3, name: 'Nhớt Castrol Power 1L', price: 100000, img: 'https://via.placeholder.com/250x200/2ecc71/FFFFFF?text=Castrol+Oil', category: 'oil', subCategory: 'nhot_ban_tong_hop' },
+            { id: 4, name: 'Lọc Nhớt Chính Hãng', price: 80000, img: 'https://via.placeholder.com/250x200/9b59b6/FFFFFF?text=Oil+Filter', category: 'part', subCategory: 'phu_tung_may' },
+            { id: 5, name: 'Xe Ô Tô Mazda 3 2025', price: 750000000, img: 'https://via.placeholder.com/250x200/e67e22/FFFFFF?text=Mazda+3', category: 'car', subCategory: 'sedan' },
+            { id: 6, name: 'Phụ Tùng Lọc Gió Xe Máy', price: 50000, img: 'https://via.placeholder.com/250x200/34495e/FFFFFF?text=Air+Filter', category: 'part', subCategory: 'phu_tung_khac' },
+            { id: 7, name: 'Xe Máy Yamaha Exciter 155', price: 50000000, img: 'https://via.placeholder.com/250x200/f39c12/FFFFFF?text=Exciter', category: 'motorbike', subCategory: 'xe_con' },
+            { id: 8, name: 'Nhớt Shell Advance 1L', price: 120000, img: 'https://via.placeholder.com/250x200/7f8c8d/FFFFFF?text=Shell+Oil', category: 'oil', subCategory: 'nhot_tong_hop' },
+            { id: 9, name: 'Xe Ô Tô Toyota Fortuner', price: 1000000000, img: 'https://via.placeholder.com/250x200/2980b9/FFFFFF?text=Fortuner', category: 'car', subCategory: 'suv' },
+            { id: 10, name: 'Đèn Pha LED Xe Máy', price: 350000, img: 'https://via.placeholder.com/250x200/c0392b/FFFFFF?text=Headlight', category: 'part', subCategory: 'phu_tung_khac' },
+        ];
+
+        // Danh mục phụ
+        const categoryMap = {
+            'all': [], // Không có sub category khi chọn All
+            'motorbike': [
+                { id: 'xe_so', name: 'Xe Số' },
+                { id: 'xe_ga', name: 'Xe Ga' },
+                { id: 'xe_con', name: 'Xe Côn Tay' },
+                { id: 'all', name: 'Tất Cả Xe Máy' }
+            ],
+            'car': [
+                { id: 'sedan', name: 'Sedan' },
+                { id: 'suv', name: 'SUV/Crossover' },
+                { id: 'all', name: 'Tất Cả Ô Tô' }
+            ],
+            'oil': [
+                { id: 'nhot_tong_hop', name: 'Tổng Hợp' },
+                { id: 'nhot_ban_tong_hop', name: 'Bán Tổng Hợp' },
+                { id: 'all', name: 'Tất Cả Nhớt' }
+            ],
+            'part': [
+                { id: 'phu_tung_may', name: 'Phụ Tùng Máy' },
+                { id: 'phu_tung_khac', name: 'Phụ Tùng Khác' },
+                { id: 'all', name: 'Tất Cả Phụ Tùng' }
+            ]
+        };
+
+        const orderStatusMap = [
+            { id: 'pending', text: 'Chờ xác nhận' },
+            { id: 'confirmed', text: 'Đã xác nhận' },
+            { id: 'ready_to_ship', text: 'Đang đóng gói' },
+            { id: 'shipping', text: 'Đang giao hàng' },
+            { id: 'delivered', text: 'Đã giao hàng' },
+            { id: 'cancelled', text: 'Đã hủy' },
+        ];
+
+        let sampleOrders = JSON.parse(localStorage.getItem('sampleOrders')) || [
+            { id: 1, date: '01/12/2025', total: 100030000, items: [{ name: 'Xe Máy Honda Wave Alpha', price: 18000000, quantity: 1 }, { name: 'Xe Ô Tô Mazda 3 2025', price: 750000000, quantity: 1 }], status: 'delivered', statusText: 'Đã giao hàng', recipient: 'Nguyễn Văn A', address: '123 Đường ABC, Hà Nội', phone: '0987654321', paymentMethod: 'COD', userId: 'user1' },
+            { id: 2, date: '05/12/2025', total: 130000, items: [{ name: 'Nhớt Castrol Power 1L', price: 100000, quantity: 1 }], status: 'pending', statusText: 'Chờ xác nhận', recipient: 'Trần Thị B', address: '456 Đường XYZ, Đà Nẵng', phone: '0901234567', paymentMethod: 'Bank', userId: 'user2' },
+        ];
+
+
+        // --- 2. HÀM CHUNG & HIỂN THỊ UI ---
+
+        /**
+         * Hiển thị Toast Notification
+         * @param {string} message - Nội dung thông báo
+         * @param {('success'|'warning'|'error')} type - Loại thông báo
+         */
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+
+            container.appendChild(toast);
+
+            // Trigger reflow to start the transition
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            // Tự động xóa sau 3 giây
+            setTimeout(() => {
+                toast.classList.remove('show');
+                // Chờ transition kết thúc rồi mới xóa element
+                toast.addEventListener('transitionend', () => {
+                    if (!container.contains(toast)) return; // Check if it hasn't been removed already
+                    container.removeChild(toast);
+                });
+            }, 3000);
+        }
+
+        /**
+         * Định dạng số thành tiền tệ Việt Nam (VNĐ)
+         * @param {number} amount - Số tiền
+         * @returns {string} - Chuỗi tiền tệ
+         */
+        function formatCurrency(amount) {
+            if (typeof amount !== 'number') return '0 VNĐ';
+            return amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+        }
+
+        /**
+         * Toggle hiển thị mật khẩu
+         * @param {string} inputId - ID của input mật khẩu
+         * @param {HTMLElement} iconElement - Element của icon
+         */
+        function togglePassword(inputId, iconElement) {
+            const input = document.getElementById(inputId);
+            const icon = iconElement.querySelector('i');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        /**
+         * Hàm chuyển đổi nội dung hiển thị chính và cập nhật thanh điều hướng
+         * @param {string} sectionId - ID của section muốn hiển thị
+         * @param {HTMLElement} element - Phần tử nav/category được click
+         */
+        function showContent(sectionId, element) {
+            // Ẩn tất cả các section chính
+            mainSections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Xóa trạng thái active trên thanh điều hướng
+            categoryItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            headerCartIcon.classList.remove('active-cart');
+
+            // Xử lý Admin Dashboard
+            if (currentUser && currentUser.isAdmin) {
+                if (sectionId === 'admin-dashboard-section') {
+                    document.getElementById(sectionId).classList.add('active');
+                    // Mặc định hiển thị Quản lý Đơn hàng
+                    const defaultAdminBtn = document.querySelector('.admin-nav-btn[data-target="admin-orders"]');
+                    if (defaultAdminBtn) {
+                        showAdminContent('admin-orders', defaultAdminBtn);
+                    }
+                }
+                return; // Admin không thấy các section khác
+            }
+
+            // Hiển thị section mong muốn cho người dùng thường
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+            if (element) {
+                element.classList.add('active');
+            }
+
+            // Xử lý hiển thị slider
+            const sliderContainer = document.querySelector('.slider-container');
+            if (sectionId === 'home-section') {
+                sliderContainer.style.display = 'block';
+            } else {
+                sliderContainer.style.display = 'none';
+            }
+
+            // Xử lý hiển thị giỏ hàng
+            if (sectionId === 'cart-section') {
+                headerCartIcon.classList.add('active-cart');
+                renderCart(); // Gọi hàm render giỏ hàng khi chuyển đến trang giỏ hàng
+            }
+
+            // Xử lý hiển thị trang sản phẩm (mặc định)
+            if (sectionId === 'products-section') {
+                // Đảm bảo nút "Tất Cả" được chọn và hiển thị sản phẩm mặc định
+                const defaultBtn = document.querySelector('.products-category-filter .category-btn[data-category="all"]');
+                if (defaultBtn && !defaultBtn.classList.contains('active')) {
+                    filterProducts('all', 'all', defaultBtn);
+                } else if (defaultBtn && defaultBtn.classList.contains('active')) {
+                    // Nếu đã active rồi, chỉ cần render lại sản phẩm theo filter hiện tại
+                    const currentMainCategory = defaultBtn.getAttribute('data-category');
+                    const currentSubCategoryBtn = document.querySelector('.products-sub-category-filter .subcategory-btn.active');
+                    const currentSubCategory = currentSubCategoryBtn ? currentSubCategoryBtn.getAttribute('data-subcategory') : 'all';
+                    renderProducts(currentMainCategory, currentSubCategory);
+                }
+            }
+
+            // Xử lý hiển thị trang đơn hàng
+            if (sectionId === 'orders-section') {
+                if (!currentUser) {
+                    showToast("Vui lòng đăng nhập để xem đơn hàng.", 'warning');
+                    showContent('home-section', document.getElementById('nav-home'));
+                    return;
+                }
+                // Mặc định hiển thị trạng thái "All"
+                const defaultStatusBtn = document.querySelector('#userOrderStatusFilter .status-btn[data-status="all"]');
+                if (defaultStatusBtn) {
+                    filterOrders('all', defaultStatusBtn);
+                }
+            }
+        }
+
+
+        // --- 3. SLIDER LOGIC ---
+
+        let currentSlide = 0;
+        const slides = document.getElementById('imageSlider');
+        const totalSlides = 3;
+
+        function moveSlider(direction) {
+            currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+            slides.style.transform = `translateX(${-currentSlide * 100}%)`;
+        }
+
+        // Tự động chuyển slide sau 5 giây
+        setInterval(() => {
+            moveSlider(1);
+        }, 5000);
+
+
+        // --- 4. LOGIN & REGISTER & PROFILE LOGIC ---
+
+        function openLoginModal() {
+            loginModal.style.display = "flex";
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginMessage').textContent = '';
+        }
+
+        function closeLoginModal() {
+            loginModal.style.display = "none";
+        }
+
+        function openRegisterModal() {
+            registerModal.style.display = "flex";
+            document.getElementById('registerForm').reset();
+            document.getElementById('registerMessage').textContent = '';
+        }
+
+        function closeRegisterModal() {
+            registerModal.style.display = "none";
+        }
+
+        function openProfileModal() {
+            if (!currentUser) return;
+
+            // Update UI with current user info
+            document.getElementById('displayNameSettings').textContent = currentUser.name;
+            document.getElementById('currentUsername').textContent = currentUser.username;
+            document.getElementById('currentName').textContent = currentUser.name;
+            document.getElementById('currentEmail').textContent = currentUser.email;
+            document.getElementById('currentPhone').textContent = currentUser.phone;
+            document.getElementById('displayNameSettings').src = currentUser.avatar;
+
+            const adminBadge = document.getElementById('isAdminBadge');
+            if (currentUser.isAdmin) {
+                adminBadge.style.display = 'inline-block';
+            } else {
+                adminBadge.style.display = 'none';
+            }
+
+            profileModal.style.display = "flex";
+        }
+
+        function closeProfileModal() {
+            profileModal.style.display = "none";
+        }
+
+        function openLogoutConfirmModal() {
+            logoutConfirmModal.style.display = "flex";
+        }
+
+        function closeLogoutConfirmModal() {
+            logoutConfirmModal.style.display = "none";
+        }
+
+        function switchToRegister() {
+            closeLoginModal();
+            openRegisterModal();
+        }
+
+        function switchToLogin() {
+            closeRegisterModal();
+            openLoginModal();
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const form = event.target;
+            const name = form.elements['reg_name'].value.trim();
+            const phone = form.elements['reg_phone'].value.trim();
+            const email = form.elements['reg_email'].value.trim();
+            const username = form.elements['reg_username'].value.trim();
+            const password = form.elements['reg_password'].value;
+            const messageElement = document.getElementById('registerMessage');
+            messageElement.textContent = '';
+
+            if (localStorage.getItem('user_' + username)) {
+                messageElement.textContent = 'Lỗi: Tên đăng nhập này đã tồn tại.';
+                return false;
+            }
+
+            let emailExists = false;
+            let phoneExists = false;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('user_')) {
+                    const user = JSON.parse(localStorage.getItem(key));
+                    if (user.email === email) {
+                        emailExists = true;
+                    }
+                    if (user.phone === phone) {
+                        phoneExists = true;
+                    }
+                }
+            }
+
+            if (emailExists) {
+                showToast("Lỗi: Email này đã được đăng ký cho một tài khoản khác.", 'error');
+                return false;
+            }
+            if (phoneExists) {
+                showToast("Lỗi: Số điện thoại này đã được đăng ký cho một tài khoản khác.", 'error');
+                return false;
+            }
+
+            const newUser = {
+                name: name,
+                phone: phone,
+                email: email,
+                username: username,
+                password: password,
+                avatar: 'https://via.placeholder.com/100/CCCCCC/808080?text=USER',
+                isAdmin: false
+            };
+
+            localStorage.setItem('user_' + username, JSON.stringify(newUser));
+
+            showToast(`Đăng ký thành công cho tài khoản ${username}! Vui lòng đăng nhập.`, 'success');
+            closeRegisterModal();
+            openLoginModal();
+
+            return false;
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const ADMIN_USER = 'admin';
+            const ADMIN_PASS = 'admin123';
+            const usernameInput = document.getElementById('loginUsername').value.trim();
+            const passwordInput = document.getElementById('loginPassword').value;
+            const messageElement = document.getElementById('loginMessage');
+            messageElement.textContent = 'Đang kiểm tra...';
+            messageElement.style.color = '#f77f00';
+
+            // 1. Kiểm tra Admin
+            if (usernameInput === ADMIN_USER && passwordInput === ADMIN_PASS) {
+                currentUser = {
+                    name: "Admin",
+                    email: "admin@shop.com",
+                    username: ADMIN_USER,
+                    isAdmin: true,
+                    avatar: 'https://via.placeholder.com/100/F77F00/FFFFFF?text=ADMIN'
+                };
+            } else {
+                // 2. Kiểm tra tài khoản User
+                let storedUserString = localStorage.getItem('user_' + usernameInput);
+
+                // Nếu không tìm thấy bằng username, tìm bằng email
+                if (!storedUserString) {
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key.startsWith('user_')) {
+                            const user = JSON.parse(localStorage.getItem(key));
+                            if (user.email === usernameInput) {
+                                storedUserString = localStorage.getItem(key);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (storedUserString) {
+                    const storedUser = JSON.parse(storedUserString);
+                    if (storedUser.password === passwordInput) {
+                        currentUser = storedUser;
+                    }
+                }
+            }
+
+            if (currentUser) {
+                isLoggedIn = true;
+                localStorage.setItem('lastLoggedInUser', currentUser.username);
+                messageElement.textContent = 'Đăng nhập thành công!';
+                messageElement.style.color = 'green';
+                setTimeout(() => {
+                    closeLoginModal();
+                    updateHeaderStatus();
+                    showToast(`Chào mừng trở lại, ${currentUser.name}!`, 'success');
+                }, 1000);
+            } else {
+                messageElement.textContent = 'Tên đăng nhập, Email hoặc Mật khẩu không đúng.';
+                messageElement.style.color = 'red';
+            }
+
+            return false;
+        }
+
+        function handleLogout() {
+            openLogoutConfirmModal();
+        }
+
+        function confirmLogout() {
+            // Xử lý trường hợp Admin Logout
+            if (currentUser && currentUser.isAdmin) {
+                headerBottom.style.display = 'flex';
+                categoryBar.style.display = 'flex';
+                document.body.style.backgroundColor = '#f0f0f0';
+            }
+
+            isLoggedIn = false;
+            currentUser = null;
+            localStorage.removeItem('lastLoggedInUser');
+            updateHeaderStatus();
+            closeLogoutConfirmModal();
+            showContent('home-section', document.getElementById('nav-home')); // Quay về trang chủ
+            showToast("Đã đăng xuất thành công.", 'warning');
+        }
+
+        function updateHeaderStatus() {
+            // Ẩn tất cả các section khi bắt đầu cập nhật trạng thái
+            mainSections.forEach(section => section.classList.remove('active'));
+
+            if (isLoggedIn && currentUser) {
+                authLinks.style.display = 'none';
+                userProfileArea.style.display = 'flex';
+                welcomeUserText.textContent = `Xin chào, ${currentUser.name}`;
+                document.querySelector('.profile-avatar i').style.color = currentUser.isAdmin ? 'yellow' : 'white';
+
+                if (currentUser.isAdmin) {
+                    // Hiển thị Admin dashboard và ẩn các mục user
+                    headerBottom.style.display = 'none';
+                    categoryBar.style.display = 'none';
+                    document.body.style.backgroundColor = '#e9ecef';
+                    const sliderContainer = document.querySelector('.slider-container');
+                    if (sliderContainer) sliderContainer.style.display = 'none';
+                    showContent('admin-dashboard-section', null);
+                } else {
+                    // Hiển thị giao diện user bình thường
+                    headerBottom.style.display = 'flex';
+                    categoryBar.style.display = 'flex';
+                    document.body.style.backgroundColor = '#f0f0f0';
+                    showContent('home-section', document.getElementById('nav-home'));
+                }
+
+            } else {
+                authLinks.style.display = 'inline';
+                userProfileArea.style.display = 'none';
+                headerBottom.style.display = 'flex';
+                categoryBar.style.display = 'flex';
+                document.body.style.backgroundColor = '#f0f0f0';
+            }
+        }
+
+        // --- Profile Update Sub-Modals ---
+
+        function openChangeUsernameModal() {
+            document.getElementById('inputNewUsername').value = currentUser.username;
+            document.getElementById('inputConfirmPasswordUsername').value = '';
+            document.getElementById('usernameMessage').textContent = '';
+            closeProfileModal();
+            changeUsernameModal.style.display = "flex";
+        }
+
+        function closeChangeUsernameModal() {
+            changeUsernameModal.style.display = "none";
+            openProfileModal();
+        }
+
+        function handleUpdateUsername(event) {
+            event.preventDefault();
+            const newUsername = document.getElementById('inputNewUsername').value.trim();
+            const confirmedPassword = document.getElementById('inputConfirmPasswordUsername').value;
+            const messageElement = document.getElementById('usernameMessage');
+            messageElement.textContent = '';
+
+            if (newUsername === currentUser.username) {
+                messageElement.textContent = 'Tên đăng nhập mới phải khác tên đăng nhập hiện tại.';
+                return false;
+            }
+            if (confirmedPassword !== currentUser.password) {
+                messageElement.textContent = 'Mật khẩu xác nhận không đúng.';
+                return false;
+            }
+            if (localStorage.getItem('user_' + newUsername)) {
+                messageElement.textContent = 'Tên đăng nhập này đã có người sử dụng.';
+                return false;
+            }
+
+            // Xóa user cũ và lưu user mới
+            localStorage.removeItem('user_' + currentUser.username);
+            currentUser.username = newUsername;
+            localStorage.setItem('user_' + currentUser.username, JSON.stringify(currentUser));
+            localStorage.setItem('lastLoggedInUser', currentUser.username);
+
+            document.getElementById('welcomeUserText').textContent = `Xin chào, ${currentUser.name}`;
+            document.getElementById('currentUsername').textContent = newUsername;
+            closeChangeUsernameModal();
+            showToast("Đã cập nhật tên đăng nhập thành công!", 'success');
+            return false;
+        }
+
+        function openChangeNameModal() {
+            document.getElementById('inputNewName').value = currentUser.name;
+            document.getElementById('inputConfirmPasswordName').value = '';
+            closeProfileModal();
+            changeNameModal.style.display = "flex";
+        }
+
+        function closeChangeNameModal() {
+            changeNameModal.style.display = "none";
+            openProfileModal();
+        }
+
+        function handleUpdateName(event) {
+            event.preventDefault();
+            const newName = document.getElementById('inputNewName').value.trim();
+            const confirmedPassword = document.getElementById('inputConfirmPasswordName').value;
+
+            if (newName === currentUser.name) {
+                showToast("Tên hiển thị mới phải khác tên hiện tại.", 'warning');
+                return false;
+            }
+            if (confirmedPassword !== currentUser.password) {
+                showToast("Mật khẩu xác nhận không đúng.", 'error');
+                return false;
+            }
+
+            currentUser.name = newName;
+            localStorage.setItem('user_' + currentUser.username, JSON.stringify(currentUser));
+
+            document.getElementById('welcomeUserText').textContent = `Xin chào, ${currentUser.name}`;
+            document.getElementById('displayNameSettings').textContent = newName;
+            document.getElementById('currentName').textContent = newName;
+            closeChangeNameModal();
+            showToast("Đã cập nhật tên hiển thị thành công!", 'success');
+            return false;
+        }
+
+        function openChangeEmailModal() {
+            document.getElementById('inputNewEmail').value = currentUser.email;
+            document.getElementById('inputConfirmPasswordEmail').value = '';
+            document.getElementById('emailMessage').textContent = '';
+            closeProfileModal();
+            changeEmailModal.style.display = "flex";
+        }
+
+        function closeChangeEmailModal() {
+            changeEmailModal.style.display = "none";
+            openProfileModal();
+        }
+
+        function handleUpdateEmail(event) {
+            event.preventDefault();
+            const newEmail = document.getElementById('inputNewEmail').value.trim();
+            const confirmedPassword = document.getElementById('inputConfirmPasswordEmail').value;
+            const messageElement = document.getElementById('emailMessage');
+            messageElement.textContent = '';
+
+            if (newEmail === currentUser.email) {
+                messageElement.textContent = 'Email mới phải khác email hiện tại.';
+                return false;
+            }
+            if (confirmedPassword !== currentUser.password) {
+                messageElement.textContent = 'Mật khẩu xác nhận không đúng.';
+                return false;
+            }
+
+            let emailExists = false;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('user_')) {
+                    const user = JSON.parse(localStorage.getItem(key));
+                    if (user.email === newEmail && user.username !== currentUser.username) {
+                        emailExists = true;
+                        break;
+                    }
+                }
+            }
+
+            if (emailExists) {
+                messageElement.textContent = 'Email này đã được đăng ký cho một tài khoản khác.';
+                return false;
+            }
+
+            currentUser.email = newEmail;
+            localStorage.setItem('user_' + currentUser.username, JSON.stringify(currentUser));
+
+            document.getElementById('currentEmail').textContent = newEmail;
+            closeChangeEmailModal();
+            showToast("Đã cập nhật Email thành công!", 'success');
+            return false;
+        }
+
+        function openChangePhoneModal() {
+            document.getElementById('inputCurrentPhone').value = currentUser.phone;
+            document.getElementById('inputNewPhone').value = '';
+            document.getElementById('inputConfirmPasswordPhone').value = '';
+            document.getElementById('phoneMessage').textContent = '';
+            closeProfileModal();
+            changePhoneModal.style.display = "flex";
+        }
+
+        function closeChangePhoneModal() {
+            changePhoneModal.style.display = "none";
+            openProfileModal();
+        }
+
+        function handleUpdatePhone(event) {
+            event.preventDefault();
+            const newPhone = document.getElementById('inputNewPhone').value.trim();
+            const confirmedPassword = document.getElementById('inputConfirmPasswordPhone').value;
+            const messageElement = document.getElementById('phoneMessage');
+            messageElement.textContent = '';
+
+            if (newPhone === currentUser.phone) {
+                messageElement.textContent = 'Số điện thoại mới phải khác số hiện tại.';
+                return false;
+            }
+            if (confirmedPassword !== currentUser.password) {
+                messageElement.textContent = 'Mật khẩu xác nhận không đúng.';
+                return false;
+            }
+
+            let phoneExists = false;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('user_')) {
+                    const user = JSON.parse(localStorage.getItem(key));
+                    if (user.phone === newPhone && user.username !== currentUser.username) {
+                        phoneExists = true;
+                        break;
+                    }
+                }
+            }
+
+            if (phoneExists) {
+                messageElement.textContent = 'Số điện thoại này đã được đăng ký cho một tài khoản khác.';
+                return false;
+            }
+
+            currentUser.phone = newPhone;
+            localStorage.setItem('user_' + currentUser.username, JSON.stringify(currentUser));
+
+            document.getElementById('currentPhone').textContent = newPhone;
+            closeChangePhoneModal();
+            showToast("Đã cập nhật Số điện thoại thành công!", 'success');
+            return false;
+        }
+
+        function openChangePasswordModal() {
+            document.getElementById('inputCurrentPassword').value = '';
+            document.getElementById('inputNewPassword').value = '';
+            document.getElementById('inputConfirmNewPassword').value = '';
+            document.getElementById('passwordMessage').textContent = '';
+            closeProfileModal();
+            changePasswordModal.style.display = "flex";
+        }
+
+        function closeChangePasswordModal() {
+            changePasswordModal.style.display = "none";
+            openProfileModal();
+        }
+
+        function handleUpdatePassword(event) {
+            event.preventDefault();
+            const currentPassword = document.getElementById('inputCurrentPassword').value;
+            const newPassword = document.getElementById('inputNewPassword').value;
+            const confirmNewPassword = document.getElementById('inputConfirmNewPassword').value;
+            const messageElement = document.getElementById('passwordMessage');
+            messageElement.textContent = '';
+
+            if (currentPassword !== currentUser.password) {
+                messageElement.textContent = 'Mật khẩu hiện tại không đúng.';
+                return false;
+            }
+            if (newPassword !== confirmNewPassword) {
+                messageElement.textContent = 'Mật khẩu mới và xác nhận mật khẩu không khớp.';
+                return false;
+            }
+            if (newPassword === currentPassword) {
+                messageElement.textContent = 'Mật khẩu mới phải khác mật khẩu hiện tại.';
+                return false;
+            }
+
+            currentUser.password = newPassword;
+            localStorage.setItem('user_' + currentUser.username, JSON.stringify(currentUser));
+
+            closeChangePasswordModal();
+            showToast("Đã cập nhật mật khẩu thành công! Vui lòng nhớ mật khẩu mới.", 'success');
+            return false;
+        }
+
+        function openChangeAvatarModal() {
+            document.getElementById('inputNewAvatarUrl').value = currentUser.avatar;
+            document.getElementById('previewNewAvatar').src = currentUser.avatar;
+            closeProfileModal();
+            changeAvatarModal.style.display = "flex";
+        }
+
+        function closeChangeAvatarModal() {
+            changeAvatarModal.style.display = "none";
+            openProfileModal();
+        }
+
+        function handleUpdateAvatar(event) {
+            event.preventDefault();
+            const newAvatarUrl = document.getElementById('inputNewAvatarUrl').value.trim();
+
+            currentUser.avatar = newAvatarUrl;
+            localStorage.setItem('user_' + currentUser.username, JSON.stringify(currentUser));
+
+            // Update avatar in profile modal
+            document.getElementById('displayNameSettings').src = newAvatarUrl;
+            // Update avatar icon in header (if it were an image, but it's an icon here, so nothing to update)
+
+            closeChangeAvatarModal();
+            showToast("Đã cập nhật Ảnh đại diện thành công!", 'success');
+            return false;
+        }
+
+
+        // --- 5. HÀM SẢN PHẨM & TÌM KIẾM ---
+
+        function renderProducts(mainCategory = 'all', subCategory = 'all', searchTerm = '') {
+            const container = document.getElementById('productGrid');
+            if (!container) return;
+
+            let filteredProducts = productData;
+
+            // 1. Lọc theo Danh mục chính (Category)
+            if (mainCategory !== 'all') {
+                filteredProducts = filteredProducts.filter(p => p.category === mainCategory);
+            }
+
+            // 2. Lọc theo Danh mục phụ (Sub-Category)
+            if (subCategory !== 'all') {
+                filteredProducts = filteredProducts.filter(p => p.subCategory === subCategory);
+            }
+
+            // 3. Lọc theo Tìm kiếm (Search)
+            if (searchTerm) {
+                const lowerCaseSearch = searchTerm.toLowerCase();
+                filteredProducts = filteredProducts.filter(p =>
+                    p.name.toLowerCase().includes(lowerCaseSearch) ||
+                    p.category.toLowerCase().includes(lowerCaseSearch) ||
+                    p.subCategory.toLowerCase().includes(lowerCaseSearch)
+                );
+            }
+
+            if (filteredProducts.length === 0) {
+                container.innerHTML = '<p style="text-align: center; margin-top: 30px; font-size: 1.1em; color: #777;">Không tìm thấy sản phẩm nào phù hợp.</p>';
+                return;
+            }
+
+            container.innerHTML = filteredProducts.map(product => `
+                <div class="product-card">
+                    <img src="${product.img}" alt="${product.name}">
+                    <div class="product-info">
+                        <h4>${product.name}</h4>
+                        <div class="product-price">${formatCurrency(product.price)}</div>
+                        <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
+                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * Render các nút danh mục chính (Cấp 1)
+         */
+        function renderMainCategories() {
+            const mainFilterContainer = document.getElementById('productsCategoryFilter');
+            if (!mainFilterContainer) return;
+
+            // Dữ liệu mẫu (có thể lấy từ categoryMap nếu muốn linh hoạt hơn)
+            const mainCategories = [
+                { id: 'all', name: 'Tất Cả Sản Phẩm', icon: 'fas fa-grip-horizontal' },
+                { id: 'motorbike', name: 'Xe Máy', icon: 'fas fa-motorcycle' },
+                { id: 'car', name: 'Xe Ô Tô', icon: 'fas fa-car' },
+                { id: 'oil', name: 'Nhớt', icon: 'fas fa-tint' },
+                { id: 'part', name: 'Phụ Tùng', icon: 'fas fa-wrench' },
+            ];
+
+            mainFilterContainer.innerHTML = mainCategories.map(cat => `
+                <button class="category-btn ${cat.id === 'all' ? 'active' : ''}"
+                        data-category="${cat.id}"
+                        onclick="filterProducts('${cat.id}', 'all', this)">
+                    <i class="${cat.icon}"></i> ${cat.name}
+                </button>
+            `).join('');
+
+            // Mặc định render sub-categories của 'all'
+            renderSubCategories('all');
+            renderProducts('all', 'all'); // Render sản phẩm mặc định
+        }
+
+        /**
+         * Render các nút danh mục phụ (Cấp 2)
+         * @param {string} mainCategory - Danh mục chính hiện tại
+         */
+        function renderSubCategories(mainCategory) {
+            const subFilterContainer = document.getElementById('productsSubCategoryFilter');
+            if (!subFilterContainer) return;
+
+            if (mainCategory === 'all' || !categoryMap[mainCategory] || categoryMap[mainCategory].length === 0) {
+                subFilterContainer.innerHTML = ''; // Ẩn sub filter nếu là "Tất Cả" hoặc không có
+                return;
+            }
+
+            let html = '';
+            // Thêm nút "Tất Cả" mặc định cho danh mục phụ
+            html += `<button class="subcategory-btn active" data-subcategory="all" onclick="filterProducts('${mainCategory}', 'all', this)"> Tất Cả </button>`;
+
+            // Thêm các nút danh mục phụ khác
+            categoryMap[mainCategory].forEach(sub => {
+                if(sub.id !== 'all') { // Không thêm nút 'all' lần nữa
+                    html += `<button class="subcategory-btn" data-subcategory="${sub.id}" onclick="filterProducts('${mainCategory}', '${sub.id}', this)">${sub.name}</button>`;
+                }
+            });
+            subFilterContainer.innerHTML = html;
+        }
+
+        /**
+         * Hàm xử lý khi click vào nút filter (Cấp 1 hoặc Cấp 2)
+         * @param {string} category - Danh mục chính
+         * @param {string} subCategory - Danh mục phụ
+         * @param {HTMLElement} buttonElement - Nút được click
+         */
+        function filterProducts(category, subCategory, buttonElement) {
+            // Xóa nội dung tìm kiếm
+            document.getElementById('searchInput').value = '';
+
+            // Xử lý nút Category (Cấp 1)
+            const isMainCategoryButton = buttonElement.closest('#productsCategoryFilter');
+            if (isMainCategoryButton) {
+                // Remove 'active' from all main category buttons
+                document.querySelectorAll('#productsCategoryFilter .category-btn').forEach(btn => btn.classList.remove('active'));
+                buttonElement.classList.add('active');
+
+                // Re-render sub-categories based on the new main category
+                renderSubCategories(category);
+
+                // Set subCategory back to 'all' if a new main category is selected
+                subCategory = 'all';
+            } else {
+                // Xử lý nút Sub-Category (Cấp 2)
+                const mainCategoryBtn = document.querySelector('#productsCategoryFilter .category-btn.active');
+                if (mainCategoryBtn) {
+                    category = mainCategoryBtn.getAttribute('data-category');
+                }
+                document.querySelectorAll('#productsSubCategoryFilter .subcategory-btn').forEach(btn => btn.classList.remove('active'));
+                buttonElement.classList.add('active');
+            }
+
+            // Render sản phẩm cuối cùng
+            renderProducts(category, subCategory);
+        }
+
+        function handleSearch(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value.trim();
+
+            // Xóa trạng thái active của tất cả các nút filter
+            document.querySelectorAll('.products-category-filter .category-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.products-sub-category-filter .subcategory-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Set nút "Tất Cả" (Cấp 1) thành active
+            const defaultBtn = document.querySelector('.products-category-filter .category-btn[data-category="all"]');
+            if (defaultBtn) {
+                defaultBtn.classList.add('active');
+            }
+
+            // Re-render sub-categories (sẽ trống nếu là 'all')
+            renderSubCategories('all');
+
+            // Hiển thị section sản phẩm nếu chưa ở đó
+            showContent('products-section', document.getElementById('nav-products'));
+
+            // Render sản phẩm theo từ khóa tìm kiếm
+            renderProducts('all', 'all', searchTerm);
+
+            if (searchTerm) {
+                showToast(`Đã tìm kiếm với từ khóa: "${searchTerm}"`, 'warning');
+            }
+
+            return false;
+        }
+
+        // --- 6. HÀM GIỎ HÀNG (CART) ---
+
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartIcon();
+        }
+
+        function updateCartIcon() {
+            const totalItems = cart.reduce((sum, item) => sum + (item.selected ? item.quantity : 0), 0);
+            const iconElement = document.getElementById('header-cart-icon');
+            if (totalItems > 0) {
+                iconElement.classList.add('active-cart');
+            } else {
+                // Nếu giỏ hàng trống hoặc không có item nào được chọn, chỉ giữ màu cam mặc định
+                if (cart.length === 0) {
+                    iconElement.classList.remove('active-cart');
+                }
+            }
+        }
+
+        function addToCart(productId) {
+            if (!isLoggedIn || currentUser.isAdmin) {
+                showToast('Vui lòng đăng nhập bằng tài khoản khách hàng để mua sắm.', 'warning');
+                openLoginModal();
+                return;
+            }
+
+            const product = productData.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+                existingItem.selected = true; // Select by default when quantity changes
+                showToast(`Đã cập nhật số lượng của "${product.name}" trong giỏ hàng.`, 'warning');
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    img: product.img,
+                    quantity: 1,
+                    selected: true // New items are selected by default
+                });
+                showToast(`Đã thêm "${product.name}" vào giỏ hàng.`, 'success');
+            }
+
+            saveCart();
+
+            // Nếu đang ở trang giỏ hàng, cập nhật lại
+            if (document.getElementById('cart-section').classList.contains('active')) {
+                renderCart();
+            }
+            // Nếu đang ở trang thanh toán, cập nhật lại
+            if (document.getElementById('checkout-section').classList.contains('active')) {
+                renderCheckoutSummary();
+            }
+        }
+
+        function removeCartItem(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            saveCart();
+            renderCart();
+            showToast('Đã xóa sản phẩm khỏi giỏ hàng.', 'error');
+            // Nếu đang ở trang thanh toán, cập nhật lại
+            if (document.getElementById('checkout-section').classList.contains('active')) {
+                renderCheckoutSummary();
+            }
+        }
+
+        function updateCartItem(productId, quantity) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                const newQuantity = parseInt(quantity);
+                if (newQuantity > 0) {
+                    item.quantity = newQuantity;
+                    item.selected = true; // Select by default when quantity changes
+                    saveCart();
+                    renderCart();
+                    // Nếu đang ở trang thanh toán, cập nhật lại
+                    if (document.getElementById('checkout-section').classList.contains('active')) {
+                        renderCheckoutSummary();
+                    }
+                } else {
+                    removeCartItem(productId);
+                }
+            }
+        }
+
+        function toggleItemSelection(productId, isChecked) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.selected = isChecked;
+                saveCart();
+                renderCartSummary(); // Cập nhật summary ngay lập tức
+                updateCheckAllStatus(); // Cập nhật trạng thái nút "Chọn tất cả"
+            }
+        }
+
+        function toggleSelectAll(isChecked) {
+            cart.forEach(item => {
+                item.selected = isChecked;
+            });
+            saveCart();
+            renderCart(); // Render lại để cập nhật checkbox
+        }
+
+        function updateCheckAllStatus() {
+            const checkAll = document.getElementById('checkAllCartItems');
+            if (checkAll) {
+                if (cart.length > 0 && cart.every(item => item.selected)) {
+                    checkAll.checked = true;
+                } else {
+                    checkAll.checked = false;
+                }
+            }
+        }
+
+
+        function renderCartSummary() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.selected ? item.price * item.quantity : 0), 0);
+            const totalItems = cart.reduce((sum, item) => sum + (item.selected ? item.quantity : 0), 0);
+            const shipping = 30000;
+            const grandTotal = subtotal + (totalItems > 0 ? shipping : 0);
+
+            document.getElementById('subtotalSummary').textContent = formatCurrency(subtotal);
+            document.getElementById('totalItemsSummary').textContent = totalItems;
+            document.getElementById('grandTotalSummary').textContent = formatCurrency(grandTotal);
+
+            // Cập nhật trạng thái nút Checkout
+            const checkoutBtn = document.querySelector('#cart-section .checkout-btn');
+            if (checkoutBtn) {
+                if (totalItems > 0) {
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.style.opacity = '1';
+                } else {
+                    checkoutBtn.disabled = true;
+                    checkoutBtn.style.opacity = '0.5';
+                }
+            }
+            updateCartIcon(); // Update cart icon to reflect selected items
+        }
+
+        function showCart() {
+            if (!isLoggedIn || currentUser.isAdmin) {
+                showToast('Vui lòng đăng nhập bằng tài khoản khách hàng để xem giỏ hàng.', 'warning');
+                openLoginModal();
+                return;
+            }
+            showContent('cart-section', document.getElementById('nav-products')); // Giữ active ở Products vì Cart không có nav item riêng
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItemsContainer');
+            const cartTable = document.getElementById('cartTable');
+            const checkAll = document.getElementById('checkAllCartItems');
+
+            // Cập nhật trạng thái checkAll trước khi render
+            updateCheckAllStatus();
+
+            if (cart.length === 0) {
+                cartTable.style.display = 'none';
+                container.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px; font-size: 1.1em; color: #777;">Giỏ hàng của bạn đang trống.</td></tr>';
+                renderCartSummary(); // Cập nhật summary về 0
+                return;
+            }
+
+            cartTable.style.display = 'table';
+            container.innerHTML = cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                return `
+                    <tr>
+                        <td><input type="checkbox" ${item.selected ? 'checked' : ''} onchange="toggleItemSelection(${item.id}, this.checked)"></td>
+                        <td>
+                            <div class="item-detail">
+                                <img src="${item.img}" alt="${item.name}">
+                                <span>${item.name}</span>
+                            </div>
+                        </td>
+                        <td class="item-price">${formatCurrency(item.price)}</td>
+                        <td>
+                            <input type="number" value="${item.quantity}" min="1" onchange="updateCartItem(${item.id}, this.value)">
+                        </td>
+                        <td class="item-total">${formatCurrency(itemTotal)}</td>
+                        <td>
+                            <button class="remove-btn" onclick="removeCartItem(${item.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            renderCartSummary();
+        }
+
+        // --- 7. HÀM XỬ LÝ ĐƠN HÀNG (ORDER) & CHECKOUT ---
+
+        function showCheckout() {
+            const selectedCartItems = cart.filter(item => item.selected);
+            if (selectedCartItems.length === 0) {
+                showToast("Vui lòng chọn sản phẩm muốn thanh toán.", 'warning');
+                return;
+            }
+
+            // Tự động điền thông tin người dùng hiện tại
+            document.getElementById('recipientName').value = currentUser.name;
+            document.getElementById('recipientPhone').value = currentUser.phone;
+            // Giả sử địa chỉ không có sẵn trong profile, để trống hoặc điền thông tin mặc định
+            document.getElementById('shippingAddress').value = '';
+
+            // Chuyển sang trang thanh toán
+            showContent('checkout-section', document.getElementById('nav-products')); // Giữ active ở Products
+            renderCheckoutSummary();
+        }
+
+        function renderCheckoutSummary() {
+            const checkoutItemsContainer = document.getElementById('checkoutOrderItems');
+            const subtotalCheckoutElement = document.getElementById('subtotalCheckout');
+            const totalItemsCheckoutElement = document.getElementById('totalItemsCheckout');
+            const shippingCheckoutElement = document.getElementById('shippingCheckout');
+            const grandTotalCheckoutElement = document.getElementById('grandTotalCheckout');
+            const checkoutBtn = document.querySelector('#checkout-section .checkout-btn');
+
+            const selectedCartItems = cart.filter(item => item.selected);
+
+            if (selectedCartItems.length === 0) {
+                checkoutItemsContainer.innerHTML = '<p style="text-align: center; color: #999;"> Không có sản phẩm nào được chọn. </p>';
+                subtotalCheckoutElement.textContent = '0 VNĐ';
+                totalItemsCheckoutElement.textContent = '0';
+                shippingCheckoutElement.textContent = '0 VNĐ';
+                grandTotalCheckoutElement.textContent = '0 VNĐ';
+                checkoutBtn.disabled = true;
+                checkoutBtn.style.opacity = '0.5';
+                return;
+            }
+
+            const subtotal = selectedCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const totalItems = selectedCartItems.reduce((sum, item) => sum + item.quantity, 0);
+            const shipping = 30000;
+            const grandTotal = subtotal + shipping;
+
+            checkoutItemsContainer.innerHTML = selectedCartItems.map(item => `
+                <div class="checkout-item">
+                    <span>${item.name} (x${item.quantity})</span>
+                    <span>${formatCurrency(item.price * item.quantity)}</span>
+                </div>
+            `).join('');
+
+            subtotalCheckoutElement.textContent = formatCurrency(subtotal);
+            totalItemsCheckoutElement.textContent = totalItems;
+            shippingCheckoutElement.textContent = formatCurrency(shipping);
+            grandTotalCheckoutElement.textContent = formatCurrency(grandTotal);
+            checkoutBtn.disabled = false;
+            checkoutBtn.style.opacity = '1';
+        }
+
+        function placeOrder() {
+            if (!currentUser) {
+                showToast("Vui lòng đăng nhập để đặt hàng.", 'error');
+                return;
+            }
+
+            const name = document.getElementById('recipientName').value.trim();
+            const phone = document.getElementById('recipientPhone').value.trim();
+            const address = document.getElementById('shippingAddress').value.trim();
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+
+            if (!name || !phone || !address) {
+                showToast("Vui lòng điền đầy đủ thông tin vận chuyển.", 'warning');
+                return;
+            }
+
+            const newOrderItems = cart.filter(item => item.selected).map(item => ({
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity
+            }));
+
+            if (newOrderItems.length === 0) {
+                showToast("Không có sản phẩm nào được chọn để đặt hàng.", 'error');
+                return;
+            }
+
+            const newOrderSubtotal = newOrderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const shippingFee = 30000;
+            const newOrderTotal = newOrderSubtotal + shippingFee;
+
+            // Tạo ID đơn hàng mới
+            const maxId = sampleOrders.length > 0 ? Math.max(...sampleOrders.map(o => o.id)) : 0;
+            const orderId = maxId + 1;
+
+            const today = new Date();
+            const dateString = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+
+            const newOrder = {
+                id: orderId,
+                date: dateString,
+                total: newOrderTotal,
+                items: newOrderItems,
+                status: 'pending',
+                statusText: 'Chờ xác nhận',
+                recipient: name,
+                address: address,
+                phone: phone,
+                paymentMethod: paymentMethod,
+                userId: currentUser.username // Thêm userId để quản lý đơn hàng theo người dùng
+            };
+
+            // Thêm vào danh sách đơn hàng mẫu
+            sampleOrders.unshift(newOrder);
+            localStorage.setItem('sampleOrders', JSON.stringify(sampleOrders));
+
+            // Xóa các sản phẩm đã đặt khỏi giỏ hàng
+            cart = cart.filter(item => !item.selected);
+            saveCart();
+
+            // Chuyển sang trang Đơn Hàng
+            showContent('orders-section', document.getElementById('nav-orders'));
+            showToast("Đặt hàng thành công! Mã đơn hàng: #" + orderId.toString().padStart(6, '0'), 'success');
+
+            // Reset form
+            document.getElementById('shippingForm').reset();
+            renderOrders('pending'); // Hiển thị đơn hàng mới
+        }
+
+        /**
+         * Render danh sách đơn hàng (User View)
+         * @param {string} filterStatus - Trạng thái cần lọc ('all', 'pending', ...)
+         */
+        function renderOrders(filterStatus = 'all') {
+            const container = document.getElementById('orderListContainer');
+            if (!container || !currentUser || currentUser.isAdmin) return; // Không chạy nếu là Admin
+
+            // 1. Lọc theo người dùng (chỉ hiển thị đơn hàng của người dùng hiện tại)
+            let userFilteredOrders = sampleOrders.filter(order => order.userId === currentUser.username);
+
+            // 2. Lọc theo trạng thái
+            let finalFilteredOrders = userFilteredOrders;
+            if (filterStatus !== 'all') {
+                finalFilteredOrders = userFilteredOrders.filter(order => order.status === filterStatus);
+            }
+
+            if (finalFilteredOrders.length === 0) {
+                container.innerHTML = '<p style="text-align: center; margin-top: 30px; font-size: 1.1em; color: #777;">Chưa có đơn hàng nào ở trạng thái này.</p>';
+                return;
+            }
+
+            container.innerHTML = finalFilteredOrders.map(order => {
+                const statusInfo = orderStatusMap.find(s => s.id === order.status);
+                const statusClass = `status-${order.status}`;
+                const orderItemsHtml = order.items.map(item =>
+                    `<li>${item.name} x ${item.quantity} (${formatCurrency(item.price)})</li>`
+                ).join('');
+
+                return `
+                    <div class="order-item">
+                        <div class="order-header">
+                            <span class="order-id">Đơn hàng #${order.id.toString().padStart(6, '0')}</span>
+                            <span class="order-status ${statusClass}">
+                                <i class="fas fa-info-circle"></i> ${statusInfo ? statusInfo.text : order.statusText}
+                            </span>
+                        </div>
+                        <div class="order-details">
+                            <p><strong>Ngày đặt:</strong> ${order.date}</p>
+                            <p><strong>Người nhận:</strong> ${order.recipient} - ${order.phone}</p>
+                            <p><strong>Địa chỉ:</strong> ${order.address}</p>
+                            <p><strong>Sản phẩm:</strong></p>
+                            <ul style="list-style: none; padding-left: 20px; font-size: 0.9em; color: #555;">
+                                ${orderItemsHtml}
+                            </ul>
+                        </div>
+                        <div class="order-total">
+                            Tổng thanh toán: ${formatCurrency(order.total)}
+                        </div>
+                        <div style="text-align: right; margin-top: 10px;">
+                            ${order.status === 'pending' ?
+                                `<button class="delete-btn" style="background-color: #e74c3c; width: auto; padding: 8px 15px;" onclick="cancelOrder(${order.id})">
+                                    <i class="fas fa-times-circle"></i> Hủy Đơn
+                                </button>` : ''
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /**
+         * Xử lý khi người dùng click vào nút filter trạng thái đơn hàng (User View)
+         * @param {string} status - Trạng thái cần lọc
+         * @param {HTMLElement} buttonElement - Nút được click
+         */
+        function filterOrders(status, buttonElement) {
+            document.querySelectorAll('#userOrderStatusFilter .status-btn').forEach(btn => btn.classList.remove('active'));
+            if (buttonElement) {
+                buttonElement.classList.add('active');
+            }
+            // Render lại danh sách đơn hàng
+            renderOrders(status);
+        }
+
+        /**
+         * Hủy đơn hàng (User View)
+         * @param {number} orderId - ID của đơn hàng cần hủy
+         */
+        function cancelOrder(orderId) {
+            const orderIndex = sampleOrders.findIndex(o => o.id === orderId);
+            if (orderIndex > -1) {
+                if (sampleOrders[orderIndex].status !== 'pending' && sampleOrders[orderIndex].status !== 'confirmed') {
+                    showToast("Chỉ có thể hủy đơn hàng đang Chờ xác nhận hoặc Đã xác nhận.", 'error');
+                    return;
+                }
+
+                if (confirm(`Bạn có chắc chắn muốn hủy đơn hàng #${orderId.toString().padStart(6, '0')}?`)) {
+                    sampleOrders[orderIndex].status = 'cancelled';
+                    sampleOrders[orderIndex].statusText = 'Đã hủy';
+                    localStorage.setItem('sampleOrders', JSON.stringify(sampleOrders));
+                    showToast(`Đơn hàng #${orderId.toString().padStart(6, '0')} đã được hủy.`, 'success');
+
+                    // Render lại danh sách đơn hàng theo filter hiện tại
+                    const activeFilterBtn = document.querySelector('#userOrderStatusFilter .status-btn.active');
+                    const currentFilter = activeFilterBtn ? activeFilterBtn.getAttribute('data-status') : 'all';
+                    renderOrders(currentFilter);
+                }
+            }
+        }
+
+        // --- 8. ADMIN FUNCTIONS ---
+
+        function showAdminContent(targetId, element) {
+            document.querySelectorAll('.admin-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.admin-nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+            element.classList.add('active');
+
+            // Render content based on tab
+            if (targetId === 'admin-orders') {
+                const defaultAdminStatusBtn = document.querySelector('#adminOrderStatusFilter .status-btn[data-status="all"]');
+                if (defaultAdminStatusBtn) {
+                    defaultAdminStatusBtn.classList.add('active');
+                }
+                renderAdminOrders('all');
+            } else if (targetId === 'admin-products') {
+                renderAdminProducts();
+            } else if (targetId === 'admin-users') {
+                renderAdminUsers();
+            } else if (targetId === 'admin-store-info') {
+                // Tải thông tin cửa hàng hiện tại nếu cần
+                // const storeInfo = JSON.parse(localStorage.getItem('store_info')) || {};
+                // document.getElementById('storeName').value = storeInfo.name || 'E-commerce Demo Shop';
+                // ...
+            }
+        }
+
+        // --- Admin: Quản lý Thông tin Cửa Hàng ---
+
+        function handleUpdateStoreInfo(event) {
+            event.preventDefault();
+            const storeName = document.getElementById('storeName').value;
+            const storeHotline = document.getElementById('storeHotline').value;
+            const storeAddress = document.getElementById('storeAddress').value;
+
+            // Lưu thông tin vào localStorage nếu cần, ở đây chỉ là demo
+            // localStorage.setItem('store_info', JSON.stringify({ name: storeName, hotline: storeHotline, address: storeAddress }));
+
+            showToast("Đã cập nhật thông tin cửa hàng thành công!", 'success');
+            return false;
+        }
+
+        // --- Admin: Quản lý Đơn Hàng ---
+
+        function renderAdminOrders(filterStatus = 'all') {
+            const container = document.getElementById('adminOrderListContainer');
+            if (!container) return;
+
+            // 1. Lọc theo trạng thái
+            let finalFilteredOrders = sampleOrders.slice(); // Copy mảng
+            if (filterStatus !== 'all') {
+                finalFilteredOrders = sampleOrders.filter(order => order.status === filterStatus);
+            }
+            // Sắp xếp ngược lại theo ID (đơn hàng mới nhất lên đầu)
+            finalFilteredOrders.sort((a, b) => b.id - a.id);
+
+
+            if (finalFilteredOrders.length === 0) {
+                container.innerHTML = '<p style="text-align: center; margin-top: 30px; font-size: 1.1em; color: #777;">Chưa có đơn hàng nào ở trạng thái này.</p>';
+                return;
+            }
+
+            container.innerHTML = finalFilteredOrders.map(order => {
+                const statusInfo = orderStatusMap.find(s => s.id === order.status);
+                const statusClass = `status-${order.status}`;
+                const orderItemsHtml = order.items.map(item =>
+                    `<li>${item.name} x ${item.quantity} (${formatCurrency(item.price)})</li>`
+                ).join('');
+
+                return `
+                    <div class="order-item">
+                        <div class="order-header">
+                            <span class="order-id">Đơn hàng #${order.id.toString().padStart(6, '0')} (Khách: ${order.userId})</span>
+                            <span class="order-status ${statusClass}">
+                                <i class="fas fa-info-circle"></i> ${statusInfo ? statusInfo.text : order.statusText}
+                            </span>
+                        </div>
+                        <div class="order-details">
+                            <p><strong>Ngày đặt:</strong> ${order.date}</p>
+                            <p><strong>Người nhận:</strong> ${order.recipient} - ${order.phone}</p>
+                            <p><strong>Địa chỉ:</strong> ${order.address}</p>
+                            <p><strong>Phương thức:</strong> ${order.paymentMethod === 'COD' ? 'COD' : 'Chuyển khoản'}</p>
+                            <p><strong>Sản phẩm:</strong></p>
+                            <ul style="list-style: none; padding-left: 20px; font-size: 0.9em; color: #555;">
+                                ${orderItemsHtml}
+                            </ul>
+                        </div>
+                        <div class="order-total">
+                            Tổng thanh toán: ${formatCurrency(order.total)}
+                        </div>
+                        <div style="text-align: right; margin-top: 10px;">
+                            <label for="status-change-${order.id}">Cập nhật Trạng thái:</label>
+                            <select id="status-change-${order.id}" class="status-dropdown" onchange="updateOrderStatus(${order.id}, this.value)">
+                                ${orderStatusMap.map(s =>
+                                    `<option value="${s.id}" ${order.status === s.id ? 'selected' : ''}>${s.text}</option>`
+                                ).join('')}
+                            </select>
+                            ${order.status !== 'cancelled' ?
+                                `<button class="delete-btn" style="background-color: #e74c3c; width: auto; padding: 8px 15px; margin-left: 10px;" onclick="cancelAdminOrder(${order.id})">
+                                    <i class="fas fa-times-circle"></i> Hủy Đơn
+                                </button>` : ''
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterAdminOrders(status, buttonElement) {
+            document.querySelectorAll('#adminOrderStatusFilter .status-btn').forEach(btn => btn.classList.remove('active'));
+            if (buttonElement) {
+                buttonElement.classList.add('active');
+            }
+            renderAdminOrders(status);
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const orderIndex = sampleOrders.findIndex(o => o.id === orderId);
+            if (orderIndex > -1) {
+                const statusInfo = orderStatusMap.find(s => s.id === newStatus);
+                sampleOrders[orderIndex].status = newStatus;
+                sampleOrders[orderIndex].statusText = statusInfo ? statusInfo.text : newStatus;
+                localStorage.setItem('sampleOrders', JSON.stringify(sampleOrders));
+                showToast(`Đã cập nhật trạng thái đơn hàng #${orderId.toString().padStart(6, '0')} thành "${statusInfo.text}".`, 'success');
+
+                // Render lại danh sách đơn hàng theo filter hiện tại
+                const activeFilterBtn = document.querySelector('#adminOrderStatusFilter .status-btn.active');
+                if (activeFilterBtn) {
+                    renderAdminOrders(activeFilterBtn.getAttribute('data-status'));
+                }
+            }
+        }
+
+        function cancelAdminOrder(orderId) {
+            const orderIndex = sampleOrders.findIndex(o => o.id === orderId);
+            if (orderIndex > -1) {
+                if (confirm(`Admin: Bạn có chắc chắn muốn HỦY đơn hàng #${orderId.toString().padStart(6, '0')}?`)) {
+                    sampleOrders[orderIndex].status = 'cancelled';
+                    sampleOrders[orderIndex].statusText = 'Đã hủy';
+                    localStorage.setItem('sampleOrders', JSON.stringify(sampleOrders));
+                    showToast(`Đơn hàng #${orderId.toString().padStart(6, '0')} đã được HỦY.`, 'error');
+
+                    // Render lại danh sách đơn hàng theo filter hiện tại
+                    const activeFilterBtn = document.querySelector('#adminOrderStatusFilter .status-btn.active');
+                    if (activeFilterBtn) {
+                        renderAdminOrders(activeFilterBtn.getAttribute('data-status'));
+                    }
+                }
+            }
+        }
+
+
+        // --- Admin: Quản lý Hàng Hóa (CRUD) ---
+
+        function renderAdminProducts() {
+            const tbody = document.getElementById('adminProductTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = productData.map(product => `
+                <tr>
+                    <td>${product.id}</td>
+                    <td><img src="${product.img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+                    <td>${product.name}</td>
+                    <td>${product.category} / ${product.subCategory}</td>
+                    <td>${formatCurrency(product.price)}</td>
+                    <td>
+                        <button class="edit-btn" onclick="openProductModal('edit', ${product.id})"><i class="fas fa-edit"></i> Sửa</button>
+                        <button class="delete-btn" onclick="deleteProduct(${product.id})"><i class="fas fa-trash"></i> Xóa</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderProductSubCategories(mainCategory, selectedSubCategory = '') {
+            const subCategorySelect = document.getElementById('productSubCategory');
+            subCategorySelect.innerHTML = '<option value="">-- Chọn Danh Mục Phụ --</option>';
+
+            if (categoryMap[mainCategory]) {
+                categoryMap[mainCategory].filter(c => c.id !== 'all').forEach(sub => {
+                    const selected = sub.id === selectedSubCategory ? 'selected' : '';
+                    subCategorySelect.innerHTML += `<option value="${sub.id}" ${selected}>${sub.name}</option>`;
+                });
+            }
+        }
+
+        function openProductModal(mode, productId = null) {
+            const title = document.getElementById('productModalTitle');
+            const saveBtn = document.getElementById('productModalSaveBtn');
+            const form = document.getElementById('productForm');
+            form.reset();
+            document.getElementById('productIdHidden').value = '';
+
+            if (mode === 'add') {
+                title.textContent = 'Thêm Sản Phẩm Mới';
+                saveBtn.textContent = 'Thêm Sản Phẩm';
+            } else if (mode === 'edit' && productId !== null) {
+                title.textContent = 'Chỉnh Sửa Sản Phẩm';
+                saveBtn.textContent = 'Cập Nhật Sản Phẩm';
+
+                const product = productData.find(p => p.id === productId);
+                if (product) {
+                    document.getElementById('productIdHidden').value = product.id;
+                    document.getElementById('productName').value = product.name;
+                    document.getElementById('productPrice').value = product.price;
+                    document.getElementById('productCategory').value = product.category;
+                    renderProductSubCategories(product.category, product.subCategory);
+                    document.getElementById('productImg').value = product.img;
+                }
+            }
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        function handleSaveProduct(event) {
+            event.preventDefault();
+
+            const id = document.getElementById('productIdHidden').value;
+            const name = document.getElementById('productName').value.trim();
+            const price = parseInt(document.getElementById('productPrice').value);
+            const category = document.getElementById('productCategory').value;
+            const subCategory = document.getElementById('productSubCategory').value;
+            const img = document.getElementById('productImg').value.trim();
+
+            if (!name || isNaN(price) || price <= 0 || !category || !subCategory || !img) {
+                showToast("Vui lòng điền đầy đủ và chính xác thông tin sản phẩm.", 'error');
+                return false;
+            }
+
+            if (id) {
+                // Edit existing product
+                const productIndex = productData.findIndex(p => p.id === parseInt(id));
+                if (productIndex > -1) {
+                    productData[productIndex].name = name;
+                    productData[productIndex].price = price;
+                    productData[productIndex].category = category;
+                    productData[productIndex].subCategory = subCategory;
+                    productData[productIndex].img = img;
+                    showToast(`Đã cập nhật sản phẩm ID #${id} thành công.`, 'success');
+                }
+            } else {
+                // Add new product
+                const newId = productData.length > 0 ? Math.max(...productData.map(p => p.id)) + 1 : 1;
+                const newProduct = { id: newId, name, price, img, category, subCategory };
+                productData.push(newProduct);
+                showToast(`Đã thêm sản phẩm "${name}" thành công.`, 'success');
+            }
+
+            localStorage.setItem('productData', JSON.stringify(productData));
+            closeProductModal();
+            renderAdminProducts();
+            // Cần render lại Product Grid nếu đang ở trang sản phẩm (để kiểm tra)
+            const mainCategoryBtn = document.querySelector('#productsCategoryFilter .category-btn.active');
+            if (mainCategoryBtn) {
+                const currentMainCategory = mainCategoryBtn.getAttribute('data-category');
+                const currentSubCategoryBtn = document.querySelector('.products-sub-category-filter .subcategory-btn.active');
+                const currentSubCategory = currentSubCategoryBtn ? currentSubCategoryBtn.getAttribute('data-subcategory') : 'all';
+                renderProducts(currentMainCategory, currentSubCategory);
+            }
+
+            return false;
+        }
+
+        function deleteProduct(productId) {
+            if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm ID #${productId} này? Thao tác này không thể hoàn tác.`)) {
+                const productIndex = productData.findIndex(p => p.id === productId);
+                if (productIndex > -1) {
+                    productData.splice(productIndex, 1);
+                    localStorage.setItem('productData', JSON.stringify(productData));
+                    showToast(`Đã xóa sản phẩm ID #${productId} thành công.`, 'error');
+                    renderAdminProducts();
+                }
+            }
+        }
+
+        // --- Admin: Quản lý Thông tin Tài khoản Khách hàng --- 
+        
+        /**
+         * Hàm hiển thị danh sách khách hàng (trừ Admin)
+         */
+        function renderAdminUsers() {
+            const tbody = document.getElementById('adminUserTableBody');
+            if (!tbody) return;
+            let userList = [];
+            
+            // Lấy danh sách tài khoản từ localStorage
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('user_')) {
+                    const user = JSON.parse(localStorage.getItem(key));
+                    if (!user.isAdmin) { // Chỉ lấy tài khoản không phải Admin
+                        userList.push(user);
+                    }
+                }
+            }
+
+            if (userList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #777;">Chưa có tài khoản khách hàng nào được đăng ký.</td></tr>';
+                return;
+            }
+
+            // Render danh sách với nút Kiểm tra (View) và Xóa (Delete)
+            tbody.innerHTML = userList.map((user, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${user.username}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <button class="edit-btn" style="background-color: #f77f00;" onclick="openUserDetailModal('${user.username}')">
+                            <i class="fas fa-eye"></i> Kiểm tra
+                        </button>
+                        <button class="delete-btn" onclick="deleteUser('${user.username}', '${user.name}')">
+                            <i class="fas fa-trash"></i> Xóa
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        /**
+         * Mở modal hiển thị thông tin chi tiết của một khách hàng (chức năng Kiểm tra).
+         * Bao gồm các thông tin cá nhân: Tên, Username, Email, Số điện thoại, Avatar.
+         * @param {string} username - Tên đăng nhập của khách hàng.
+         */
+        function openUserDetailModal(username) {
+            const userString = localStorage.getItem('user_' + username);
+            if (!userString) {
+                showToast(`Không tìm thấy thông tin khách hàng ${username}.`, 'error');
+                return;
+            }
+
+            const user = JSON.parse(userString);
+
+            document.getElementById('userAvatarModal').src = user.avatar;
+            document.getElementById('userNameDetail').textContent = user.name;
+            document.getElementById('userUsernameDetail').textContent = user.username;
+            document.getElementById('userEmailDetail').textContent = user.email;
+            document.getElementById('userPhoneDetail').textContent = user.phone;
+
+            document.getElementById('userDetailModal').style.display = 'flex';
+        }
+
+        /**
+         * Xóa tài khoản của một khách hàng.
+         * @param {string} username - Tên đăng nhập của khách hàng.
+         * @param {string} name - Tên hiển thị của khách hàng.
+         */
+        function deleteUser(username, name) {
+            if (confirm(`Bạn có chắc chắn muốn xóa tài khoản "${name}" (${username})? Thao tác này không thể hoàn tác.`)) {
+                
+                // Xóa tài khoản khỏi localStorage
+                localStorage.removeItem('user_' + username);
+
+                // Xử lý nếu tài khoản bị xóa là tài khoản đang đăng nhập
+                if (currentUser && currentUser.username === username) {
+                    // Tự động đăng xuất người dùng đó
+                    handleLogout(); 
+                }
+
+                showToast(`Đã xóa tài khoản "${name}" thành công.`, 'success');
+
+                // Render lại danh sách khách hàng trên bảng điều khiển Admin
+                renderAdminUsers();
+            }
+        }
+
+
+        // --- 9. INIT ---
+
+        window.addEventListener('load', () => {
+            // Khởi tạo danh mục sản phẩm
+            renderMainCategories();
+
+            // Khởi tạo trạng thái đăng nhập từ localStorage (nếu có)
+            const lastLoggedInUser = localStorage.getItem('lastLoggedInUser');
+            if (lastLoggedInUser) {
+                 const storedUserString = localStorage.getItem('user_' + lastLoggedInUser);
+                 if (storedUserString) {
+                    currentUser = JSON.parse(storedUserString);
+                    isLoggedIn = true;
+                 } else if (lastLoggedInUser === 'admin') {
+                     // Tải lại thông tin admin nếu cần
+                     currentUser = {
+                        name: "Admin",
+                        email: "admin@shop.com",
+                        username: 'admin',
+                        isAdmin: true,
+                        avatar: 'https://via.placeholder.com/100/F77F00/FFFFFF?text=ADMIN'
+                    };
+                    isLoggedIn = true;
+                    // Xử lý giao diện Admin nếu admin đăng nhập
+                    headerBottom.style.display = 'none';
+                    categoryBar.style.display = 'none';
+                    document.body.style.backgroundColor = '#e9ecef';
+                 }
+            }
+            updateHeaderStatus();
+
+            // Khởi tạo hiển thị Trang Chủ nếu không phải Admin
+            if (!currentUser || !currentUser.isAdmin) {
+                 showContent('home-section', document.getElementById('nav-home'));
+            }
+        });
+    </script>
+</body>
+</html>
